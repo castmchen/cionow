@@ -30,7 +30,7 @@
                             "src/styles.scss",
                             "src/assets/fonts/material-icon/material-icons.css"
                         ],
-                        "scripts": [ "./node_modules/echarts/dist/echarts.js" ],
+                        "scripts": [ "./node_modules/echarts/dist/echarts.js", "./node_modules/echarts/theme/macarons.js" ],
                         "es5BrowserSupport": true
                     },
                     "configurations": {

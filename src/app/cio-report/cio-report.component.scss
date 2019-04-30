@@ -23,6 +23,16 @@ $third:30%;
         display: flex;
         align-items: center;
     }
+    button {
+        height: 90px;
+        width: 90px;
+        font-size: xx-large;
+        font-weight: bold;
+        font-family: fantasy;
+        color: darkturquoise;
+        border-radius: 50%;
+        box-shadow: 10px 10px 20px;
+    }
 }
 
 #cio-report-content {
@@ -35,6 +45,8 @@ $third:30%;
     .cio-report-half {
         width: 80%;
         height: 48%;
+    }
+    .cio-report-half:first-child {
         border-bottom: 1px solid #e9eaec;
     }
     .cio-report-third {
@@ -46,8 +58,9 @@ $third:30%;
 }
 
 .cio-dropdown {
-    position: absolute;
-    width: 100%;
+    width: 20%;
+    display: flex;
+    align-items: center;
     .cio-dropdown-options {
         width: 100%;
     }

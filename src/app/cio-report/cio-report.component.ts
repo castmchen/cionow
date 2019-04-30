@@ -10,10 +10,10 @@ import { MatSelectChange } from '@angular/material/select';
 })
 export class CioReportComponent implements OnInit {
   public positionList = [];
-  public positionMDList: PositionImp[];
-  public positionLeaderList: PositionImp[];
-  public positionManagerList: PositionImp[];
-  public positionPorfolioList: PositionImp[];
+  public positionMDList: PositionImp[] = [];
+  public positionLeaderList: PositionImp[] = [];
+  public positionManagerList: PositionImp[] = [];
+  public positionPorfolioList: PositionImp[] = [];
 
   private selectedMD: PositionImp;
   private selectedLeader: PositionImp;
@@ -26,6 +26,7 @@ export class CioReportComponent implements OnInit {
     this.chartService.getDefaultLevel().subscribe(result => {
       this.positionList = result as [];
       for (const positionMDItem of this.positionList) {
+        debugger;
         this.positionMDList.push({
           level: positionMDItem.level,
           eid: positionMDItem.eid
@@ -75,7 +76,7 @@ export class CioReportComponent implements OnInit {
       defaultManager.lowerPositions &&
       defaultManager.lowerPositions.length > 0
     ) {
-      defaultManager.forEach(_ => {
+      defaultManager.lowerPositions.forEach(_ => {
         this.positionPorfolioList.push({
           level: _.level,
           eid: _.eid

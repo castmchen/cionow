@@ -4,12 +4,12 @@ import { CioReportComponent } from './cio-report/cio-report.component';
 
 const routes: Routes = [
   {
-    path: 'home',
+    path: 'index',
     component: CioReportComponent
   },
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'index',
     pathMatch: 'full'
   }
 ];

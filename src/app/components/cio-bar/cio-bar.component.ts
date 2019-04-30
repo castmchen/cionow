@@ -8,29 +8,74 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CioBarComponent implements OnInit {
   private options: EChartOption = {
-    xAxis: {
-      type: 'category',
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    title: {
+      text: 'Automatic&Manual Comparison',
+      subtext: 'Hour Unit'
     },
-    yAxis: {
-      type: 'value'
+    tooltip: {
+      trigger: 'axis'
     },
+    legend: {
+      data: ['Automatic', 'Manual']
+    },
+    toolbox: {
+      show: true,
+      feature: {
+        mark: { show: true },
+        dataView: { show: true, readOnly: false },
+        saveAsImage: { show: true }
+      }
+    },
+    xAxis: [
+      {
+        type: 'category',
+        boundaryGap: true,
+        data: ['MON', 'TUE', 'WED', 'THUR', 'FRI', 'SAT', 'SUN']
+      }
+    ],
+    yAxis: [
+      {
+        type: 'value',
+        axisLabel: {
+          formatter: '{value} H'
+        }
+      }
+    ],
     series: [
       {
-        data: [820, 932, 901, 934, 1290, 1330, 1320],
+        name: 'Automatic',
         type: 'bar',
+        data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6],
+        markPoint: {
+          data: [{ type: 'max', name: 'Max' }, { type: 'min', name: 'Min' }]
+        },
+        markLine: {
+          data: [{ type: 'average', name: 'Average' }]
+        }
+      },
+      {
+        name: 'Manual',
+        type: 'bar',
+        data: [2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6],
         markPoint: {
           data: [
-            { type: 'max', name: '最大值' },
-            { type: 'min', name: '最小值' }
+            {
+              name: 'Max',
+              value: 182.2,
+              xAxis: 7,
+              yAxis: 183,
+              symbolSize: 18
+            },
+            { name: 'Min', value: 2.3, xAxis: 11, yAxis: 3 }
           ]
         },
         markLine: {
-          data: [{ type: 'average', name: '平均值' }]
+          data: [{ type: 'average', name: 'Average' }]
         }
       }
     ]
   };
+
   constructor() {}
 
   ngOnInit() {}
