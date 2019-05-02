@@ -2,6 +2,7 @@ import { PositionImp } from './../interface/positionImp';
 import { ChartServiceService } from './../services/chart-service.service';
 import { Component, OnInit } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
+import 'hammerjs';
 
 @Component({
   selector: 'app-cio-report',
@@ -14,6 +15,8 @@ export class CioReportComponent implements OnInit {
   public positionLeaderList: PositionImp[] = [];
   public positionManagerList: PositionImp[] = [];
   public positionPorfolioList: PositionImp[] = [];
+  // tslint:disable-next-line: ban-types
+  public currentTimeModel: Number;
 
   private selectedMD: PositionImp;
   private selectedLeader: PositionImp;
@@ -23,10 +26,10 @@ export class CioReportComponent implements OnInit {
   constructor(private chartService: ChartServiceService) {}
 
   ngOnInit() {
+    this.currentTimeModel = 1;
     this.chartService.getDefaultLevel().subscribe(result => {
       this.positionList = result as [];
       for (const positionMDItem of this.positionList) {
-        debugger;
         this.positionMDList.push({
           level: positionMDItem.level,
           eid: positionMDItem.eid
@@ -164,4 +167,24 @@ export class CioReportComponent implements OnInit {
   }
 
   getChartByPosition() {}
+
+  splitTimeAxis(value: number | null) {
+    const selectedOne = document.getElementById(`timeModel_${value}`);
+    selectedOne.parentNode.childNodes.forEach(_ => {
+      const tempHtml = _ as HTMLElement;
+      tempHtml.removeAttribute('style');
+    });
+    document
+      .getElementById(`timeModel_${value}`)
+      .setAttribute('style', 'background: #8bab68;');
+    switch (value) {
+      case 1:
+        return 'W';
+      case 2:
+        return 'M';
+      case 3:
+        return 'Y';
+    }
+    return 'W';
+  }
 }

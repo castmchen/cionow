@@ -1,5 +1,6 @@
-import { MateralModule } from './materal.module';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MateralModule } from './materal.module';
 import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -25,11 +26,12 @@ import { HttpClientModule } from '@angular/common/http';
     CioDropdownComponent
   ],
   imports: [
+    BrowserAnimationsModule,
     BrowserModule,
     AppRoutingModule,
-    MateralModule,
     NgxEchartsModule,
-    HttpClientModule
+    HttpClientModule,
+    MateralModule
   ],
   providers: [],
   bootstrap: [AppComponent]

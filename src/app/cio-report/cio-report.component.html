@@ -47,6 +47,20 @@
         <button mat-button (click)="getChartByPosition()">GO</button>
     </div>
     <div id="cio-report-content">
+        <span style="position: absolute;font-size: 28px;font-weight: bold; color: rgba(0, 0, 0, .54);">Time Axis</span>
+        <div class="cio-report-timeAxis">
+            <div class="cio-report-timeAxis-child">
+                <span id="timeModel_1">WEEK</span>
+                <span id="timeModel_2">MONTH</span>
+                <span id="timeModel_3">YEAR</span>
+            </div>
+            <div class="cio-report-timeAxis-child">
+                <mat-icon>chevron_left</mat-icon>
+                <mat-slider thumbLabel [displayWith]="splitTimeAxis" value='1' tickInterval="1" step="1" min="1" max="3"></mat-slider>
+                <mat-icon>chevron_right</mat-icon>
+            </div>
+        </div>
+
         <!-- <app-cio-pie class="cio-report-third"></app-cio-pie> -->
         <!-- <app-cio-sphere class="cio-report-third"></app-cio-sphere> -->
         <app-cio-bar class="cio-report-half"></app-cio-bar>

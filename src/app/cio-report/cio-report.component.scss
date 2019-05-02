@@ -8,6 +8,7 @@ $third:30%;
     align-content: space-around;
     width: 100%;
     height: 100%;
+    color: rgba(0, 0, 0, .54);
 }
 
 #cio-report-filter {
@@ -43,8 +44,8 @@ $third:30%;
     justify-content: space-around;
     align-content: space-around;
     .cio-report-half {
-        width: 80%;
-        height: 48%;
+        width: 48%;
+        height: 70%;
     }
     .cio-report-half:first-child {
         border-bottom: 1px solid #e9eaec;
@@ -57,6 +58,46 @@ $third:30%;
     }
 }
 
+.cio-report-timeAxis {
+    width: 80%;
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    flex-flow: row wrap;
+    display: flex;
+    align-items: center;
+    p {
+        color: rgba(0, 0, 0, .54);
+        line-height: 48px;
+        padding-right: 20px;
+        display: block;
+        height: 48px;
+    }
+    .cio-report-timeAxis-child {
+        width: 80%;
+        display: flex;
+        justify-content: space-between;
+        flex-flow: row nowrap;
+        span {
+            width: calc(100% / 3);
+            text-align: center;
+        }
+    }
+    .cio-report-timeAxis-child:first-child {
+        background: #ffced3;
+        color: #ffffff;
+    }
+}
+
+mat-slider {
+    width: 90%;
+}
+
+mat-icon {
+    cursor: pointer;
+    font-size: 48px;
+}
+
 .cio-dropdown {
     width: 20%;
     display: flex;
@@ -64,4 +105,8 @@ $third:30%;
     .cio-dropdown-options {
         width: 100%;
     }
+}
+
+.selectedModel {
+    background: #8bab68;
 }
