@@ -1,3 +1,4 @@
+import { RequestBodyImp } from './../interface/requestBodyImp';
 import { PositionImp } from './../interface/positionImp';
 import { ChartServiceService } from './../services/chart-service.service';
 import { Component, OnInit } from '@angular/core';
@@ -15,18 +16,21 @@ export class CioReportComponent implements OnInit {
   public positionLeaderList: PositionImp[] = [];
   public positionManagerList: PositionImp[] = [];
   public positionPorfolioList: PositionImp[] = [];
-  // tslint:disable-next-line: ban-types
-  public currentTimeModel: Number;
 
   private selectedMD: PositionImp;
   private selectedLeader: PositionImp;
   private selectedManager: PositionImp;
   private selectedPorfolio: PositionImp;
+  private currentPeriodModel: number;
+  private currentPeriodStart: Date;
+  private currentPeriodEnd: Date;
 
   constructor(private chartService: ChartServiceService) {}
 
   ngOnInit() {
-    this.currentTimeModel = 1;
+    this.currentPeriodModel = 1;
+    this.calculatePeriod();
+
     this.chartService.getDefaultLevel().subscribe(result => {
       this.positionList = result as [];
       for (const positionMDItem of this.positionList) {
@@ -34,6 +38,9 @@ export class CioReportComponent implements OnInit {
           level: positionMDItem.level,
           eid: positionMDItem.eid
         } as PositionImp);
+      }
+      if (this.positionMDList.length > 0) {
+        this.selectedMD = this.positionMDList[0];
       }
       this.buildLowerPositions(this.positionList[0]);
     });
@@ -57,6 +64,10 @@ export class CioReportComponent implements OnInit {
           eid: positionLeaderItem.eid
         } as PositionImp);
       }
+
+      if (this.positionLeaderList.length > 0) {
+        this.selectedLeader = this.positionLeaderList[0];
+      }
     }
 
     let defaultManager: any;
@@ -72,6 +83,10 @@ export class CioReportComponent implements OnInit {
           eid: positionManagerItem.eid
         } as PositionImp);
       }
+
+      if (this.positionManagerList.length > 0) {
+        this.selectedManager = this.positionManagerList[0];
+      }
     }
 
     if (
@@ -85,6 +100,9 @@ export class CioReportComponent implements OnInit {
           eid: _.eid
         } as PositionImp);
       });
+      if (this.positionPorfolioList.length > 0) {
+        this.selectedPorfolio = this.positionPorfolioList[0];
+      }
     }
   }
 
@@ -166,7 +184,67 @@ export class CioReportComponent implements OnInit {
     }
   }
 
-  getChartByPosition() {}
+  getChartByPosition() {
+    const requestBody: RequestBodyImp = {
+      mdEid: this.selectedMD.eid,
+      leaderEid: this.selectedLeader.eid,
+      managerEid: this.selectedManager.eid,
+      portfolioEid: this.selectedPorfolio.eid,
+      periodEnd: this.currentPeriodEnd.getTime(),
+      periodStart: this.currentPeriodStart.getTime()
+    };
+    this.chartService.getChartByPositionAndPeriod(requestBody);
+  }
+
+  calculatePeriod() {
+    switch (this.currentPeriodModel) {
+      case 1: {
+        // week
+        if (this.currentPeriodEnd == null) {
+          this.currentPeriodEnd = new Date();
+        } else {
+          this.currentPeriodEnd = new Date(this.currentPeriodEnd.getDate() - 7);
+        }
+
+        this.currentPeriodStart = new Date(this.currentPeriodEnd.getDate() - 7);
+        break;
+      }
+      case 2: {
+        // month
+        if (this.currentPeriodEnd == null) {
+          this.currentPeriodEnd = new Date();
+        } else {
+          const newEndTimeticks = this.currentPeriodEnd.setDate(
+            this.currentPeriodEnd.getMonth() - 1
+          );
+          this.currentPeriodEnd = new Date(newEndTimeticks);
+        }
+
+        const newStartTimeticks = this.currentPeriodStart.setDate(
+          this.currentPeriodStart.getMonth() - 1
+        );
+        this.currentPeriodStart = new Date(newStartTimeticks);
+        break;
+      }
+      case 3: {
+        // year
+        if (this.currentPeriodEnd == null) {
+          this.currentPeriodEnd = new Date();
+        } else {
+          const newEndTimeTicks = this.currentPeriodEnd.setFullYear(
+            this.currentPeriodEnd.getFullYear() - 1
+          );
+          this.currentPeriodEnd = new Date(newEndTimeTicks);
+        }
+
+        const newStartTimeTicks = this.currentPeriodStart.setFullYear(
+          this.currentPeriodStart.getFullYear() - 1
+        );
+        this.currentPeriodStart = new Date(newStartTimeTicks);
+        break;
+      }
+    }
+  }
 
   splitTimeAxis(value: number | null) {
     const selectedOne = document.getElementById(`timeModel_${value}`);
@@ -177,6 +255,8 @@ export class CioReportComponent implements OnInit {
     document
       .getElementById(`timeModel_${value}`)
       .setAttribute('style', 'background: #8bab68;');
+
+    this.currentPeriodModel = value;
     switch (value) {
       case 1:
         return 'W';

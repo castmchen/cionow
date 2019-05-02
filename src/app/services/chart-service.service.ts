@@ -1,3 +1,4 @@
+import { RequestBodyImp } from './../interface/requestBodyImp';
 import { PositionImp } from './../interface/positionImp';
 import { ChartImp } from '../interface/charImp';
 import { Injectable } from '@angular/core';
@@ -15,7 +16,7 @@ export class ChartServiceService {
   private baseUrl = 'http://localhost:8080';
   constructor(private http: HttpClient) {}
 
-  public getChartByPeriod(filterInfo: ChartImp) {
+  public getChartByPositionAndPeriod(filterInfo: RequestBodyImp) {
     const targetUrl = `${this.baseUrl}/chart/filterbypositionandperiod`;
     return this.http.post(targetUrl, filterInfo, this.httpOptions);
   }

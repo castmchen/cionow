@@ -1,3 +1,4 @@
+import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MateralModule } from './materal.module';
@@ -28,6 +29,7 @@ import { HttpClientModule } from '@angular/common/http';
   imports: [
     BrowserAnimationsModule,
     BrowserModule,
+    FormsModule,
     AppRoutingModule,
     NgxEchartsModule,
     HttpClientModule,
