@@ -49,7 +49,14 @@ $third:30%;
     }
     .cio-report-half:first-child {
         border-bottom: 1px solid #e9eaec;
-        width: 25%;
+    }
+    .cio-report-bar {
+        width: 30%;
+        height: 50%;
+    }
+    .cio-report-line {
+        width: 70%;
+        height: 72%;
     }
     .cio-report-third {
         width: $third;

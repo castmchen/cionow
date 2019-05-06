@@ -14,7 +14,7 @@ export class CioBarComponent implements OnInit {
   constructor(private chartService: ChartServiceService) {
     this.options = {
       title: {
-        text: 'Automatic&Manual Comparison',
+        text: 'Comparison Bar',
         subtext: 'Hour Unit'
       },
       tooltip: {
