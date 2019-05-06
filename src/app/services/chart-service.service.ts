@@ -1,7 +1,6 @@
 import { RequestBodyImp } from './../interface/requestBodyImp';
 import { PositionImp } from './../interface/positionImp';
-import { ChartImp } from '../interface/charImp';
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 
 @Injectable({
@@ -14,6 +13,9 @@ export class ChartServiceService {
     })
   };
   private baseUrl = 'http://localhost:8080';
+  public onResetChart: EventEmitter<any> = new EventEmitter<any>();
+  public onMonitorChart: EventEmitter<any> = new EventEmitter<any>();
+
   constructor(private http: HttpClient) {}
 
   public getChartByPositionAndPeriod(filterInfo: RequestBodyImp) {
@@ -32,5 +34,44 @@ export class ChartServiceService {
   public getDefaultLevel() {
     const targetUrl = `${this.baseUrl}/getDefaultlevel`;
     return this.http.get(targetUrl);
+  }
+  public getPeriodByModel(currentModel) {
+    let timePeriod: any[] = [];
+    switch (currentModel) {
+      case 1: {
+        timePeriod = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
+        break;
+      }
+      case 2: {
+        timePeriod = ['First Week', 'Second Week', 'Third Week', 'Fourth Week'];
+        break;
+      }
+      case 3: {
+        timePeriod = [
+          'Jan',
+          'Feb',
+          'Mar',
+          'Apr',
+          'May',
+          'June',
+          'July',
+          'Aug',
+          'Sep',
+          'Oct',
+          'Nov',
+          'Dec'
+        ];
+        break;
+      }
+    }
+    return timePeriod;
+  }
+
+  public triggerResetChart(charOptions) {
+    this.onResetChart.emit(charOptions);
+  }
+
+  public triggerMonitorChart(chartOption) {
+    this.onMonitorChart.emit(chartOption);
   }
 }

@@ -3,6 +3,7 @@ import { PositionImp } from './../interface/positionImp';
 import { ChartServiceService } from './../services/chart-service.service';
 import { Component, OnInit } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
+import { map } from 'rxjs/operators';
 import 'hammerjs';
 
 @Component({
@@ -11,6 +12,7 @@ import 'hammerjs';
   styleUrls: ['./cio-report.component.scss']
 })
 export class CioReportComponent implements OnInit {
+  public ws: WebSocket;
   public positionList = [];
   public positionMDList: PositionImp[] = [];
   public positionLeaderList: PositionImp[] = [];
@@ -24,10 +26,12 @@ export class CioReportComponent implements OnInit {
   private currentPeriodModel: number;
   private currentPeriodStart: Date;
   private currentPeriodEnd: Date;
+  private isLoadingFlag: boolean;
 
   constructor(private chartService: ChartServiceService) {}
 
   ngOnInit() {
+    this.isLoadingFlag = true;
     this.currentPeriodModel = 1;
     this.calculatePeriod();
 
@@ -43,7 +47,55 @@ export class CioReportComponent implements OnInit {
         this.selectedMD = this.positionMDList[0];
       }
       this.buildLowerPositions(this.positionList[0]);
+      this.getChartByPosition();
     });
+
+    this.connectWS();
+  }
+
+  connectWS() {
+    if (this.ws != null) {
+      this.ws.close();
+    }
+    this.ws = new WebSocket('ws://localhost:8080/realtime');
+    const that = this;
+    this.ws.onopen = event => {
+      console.log('WS has connected successfully.');
+    };
+
+    this.ws.onmessage = event => {
+      try {
+        if (event.data) {
+          console.log(event.data);
+          const newChartOption = JSON.parse(event.data);
+          if (
+            that.selectedMD.eid === newChartOption.mdEid &&
+            that.selectedLeader.eid === newChartOption.leaderEid &&
+            that.selectedManager.eid === newChartOption.managerEid &&
+            that.selectedPorfolio.eid === newChartOption.portfolioEid &&
+            that.currentPeriodStart <= newChartOption.eventTime
+          ) {
+            that.chartService.triggerMonitorChart({
+              automatica: newChartOption.hours,
+              manual: 10,
+              periodTime: newChartOption.eventTime
+            });
+          }
+        }
+      } catch (error) {
+        console.error(
+          `An error has been occured while getting WS data, Details: ${error}`
+        );
+      }
+    };
+    this.ws.onerror = event => {
+      console.log(
+        `An error has occured while connecting WS, Details: ${event}`
+      );
+    };
+    this.ws.onclose = event => {
+      console.log('WS connection has been closed.');
+    };
   }
 
   private buildLowerPositions(selectedMD: any) {
@@ -185,6 +237,7 @@ export class CioReportComponent implements OnInit {
   }
 
   getChartByPosition() {
+    this.isLoadingFlag = true;
     const requestBody: RequestBodyImp = {
       mdEid: this.selectedMD.eid,
       leaderEid: this.selectedLeader.eid,
@@ -193,7 +246,57 @@ export class CioReportComponent implements OnInit {
       periodEnd: this.currentPeriodEnd.getTime(),
       periodStart: this.currentPeriodStart.getTime()
     };
-    this.chartService.getChartByPositionAndPeriod(requestBody);
+    this.chartService
+      .getChartByPositionAndPeriod(requestBody)
+      .pipe(
+        map(_ => {
+          const chartArray = [];
+
+          let initPeriodEnd = this.currentPeriodEnd.getTime();
+          for (let i = 0; i < 7; i++) {
+            const initTime = new Date(initPeriodEnd);
+            const initDate = `${initTime.getFullYear()}/${initTime.getMonth() +
+              1}/${initTime.getDate()}`;
+            chartArray.push({
+              periodTime: initDate,
+              automaticValue: 0,
+              manualValue: 0
+            });
+            initPeriodEnd -= 1000 * 60 * 60 * 24;
+          }
+
+          for (const chartInfo of _ as any) {
+            const callbackDate = new Date(
+              chartInfo.eventTime
+            ).toLocaleDateString();
+
+            const existChart = chartArray.find(chartItem => {
+              if (typeof chartItem !== 'undefined') {
+                return chartItem.periodTime === callbackDate;
+              }
+            });
+            if (existChart) {
+              // tslint:disable-next-line: radix
+              existChart.automaticValue += parseInt(chartInfo.hours);
+              existChart.manualValue += 10;
+              existChart.triggerTime = chartInfo.eventTime;
+            } else {
+              chartArray.push({
+                periodTime: callbackDate,
+                automaticValue: chartInfo.hours,
+                manualValue: 10,
+                triggerTime: chartInfo.eventTime
+              });
+            }
+          }
+
+          return chartArray;
+        })
+      )
+      .subscribe(result => {
+        this.chartService.triggerResetChart(result);
+        this.isLoadingFlag = false;
+      });
   }
 
   calculatePeriod() {
@@ -202,23 +305,31 @@ export class CioReportComponent implements OnInit {
         // week
         if (this.currentPeriodEnd == null) {
           this.currentPeriodEnd = new Date();
-        } else {
-          this.currentPeriodEnd = new Date(this.currentPeriodEnd.getDate() - 7);
-        }
+          const defaultTime = new Date();
 
-        this.currentPeriodStart = new Date(this.currentPeriodEnd.getDate() - 7);
+          const defaultStartTimeticks = defaultTime.setDate(
+            defaultTime.getDate() - 7
+          );
+          this.currentPeriodStart = new Date(defaultStartTimeticks);
+        } else {
+          const newEndTimeticks = this.currentPeriodEnd.setDate(
+            this.currentPeriodEnd.getDate() - 7
+          );
+          this.currentPeriodEnd = new Date(newEndTimeticks);
+
+          const newStartTimeticks = this.currentPeriodStart.setDate(
+            this.currentPeriodStart.getDate() - 7
+          );
+          this.currentPeriodStart = new Date(newStartTimeticks);
+        }
         break;
       }
       case 2: {
         // month
-        if (this.currentPeriodEnd == null) {
-          this.currentPeriodEnd = new Date();
-        } else {
-          const newEndTimeticks = this.currentPeriodEnd.setDate(
-            this.currentPeriodEnd.getMonth() - 1
-          );
-          this.currentPeriodEnd = new Date(newEndTimeticks);
-        }
+        const newEndTimeticks = this.currentPeriodEnd.setDate(
+          this.currentPeriodEnd.getMonth() - 1
+        );
+        this.currentPeriodEnd = new Date(newEndTimeticks);
 
         const newStartTimeticks = this.currentPeriodStart.setDate(
           this.currentPeriodStart.getMonth() - 1
@@ -228,14 +339,10 @@ export class CioReportComponent implements OnInit {
       }
       case 3: {
         // year
-        if (this.currentPeriodEnd == null) {
-          this.currentPeriodEnd = new Date();
-        } else {
-          const newEndTimeTicks = this.currentPeriodEnd.setFullYear(
-            this.currentPeriodEnd.getFullYear() - 1
-          );
-          this.currentPeriodEnd = new Date(newEndTimeTicks);
-        }
+        const newEndTimeTicks = this.currentPeriodEnd.setFullYear(
+          this.currentPeriodEnd.getFullYear() - 1
+        );
+        this.currentPeriodEnd = new Date(newEndTimeTicks);
 
         const newStartTimeTicks = this.currentPeriodStart.setFullYear(
           this.currentPeriodStart.getFullYear() - 1
