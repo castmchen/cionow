@@ -1,6 +1,17 @@
-<div id="cio-report">
+<div id="cio-report" >
     <div id="cio-report-filter">
-        <div class="cio-dropdown">
+        <div class="cio-dropdown" >
+            <mat-form-field class="cio-dropdown-options">
+                <mat-label>Porfolio</mat-label>
+                <mat-select [(value)]="selectedPorfolio" (selectionChange)="changePosition($event)" >
+                    <mat-option *ngFor="let position of this.positionPorfolioList" [value]="position">
+                        {{position.eid}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <div class="cio-dropdown" >
             <mat-form-field class="cio-dropdown-options">
                 <mat-label>MD</mat-label>
                 <mat-select [(value)]="selectedMD" (selectionChange)="changePosition($event)">
@@ -11,7 +22,7 @@
             </mat-form-field>
         </div>
 
-        <div class="cio-dropdown">
+        <div class="cio-dropdown" >
             <mat-form-field class="cio-dropdown-options">
                 <mat-label>OPS Leader</mat-label>
                 <mat-select [(value)]="selectedLeader" (selectionChange)="changePosition($event)">
@@ -22,7 +33,7 @@
             </mat-form-field>
         </div>
 
-        <div class="cio-dropdown">
+        <div class="cio-dropdown" >
             <mat-form-field class="cio-dropdown-options">
                 <mat-label>Manager</mat-label>
                 <mat-select [(value)]="selectedManager" (selectionChange)="changePosition($event)">
@@ -35,34 +46,23 @@
 
         <div class="cio-dropdown">
             <mat-form-field class="cio-dropdown-options">
-                <mat-label>Porfolio</mat-label>
-                <mat-select [(value)]="selectedPorfolio" (selectionChange)="changePosition($event)">
-                    <mat-option *ngFor="let position of this.positionPorfolioList" [value]="position">
-                        {{position.eid}}
-                    </mat-option>
+                <mat-label>TimeAxis</mat-label>
+                <mat-select [(value)]="selectedTimeAxis" (selectionChange)="changeTimeAxis($event)">
+                  <mat-option value="hour">Hour</mat-option>
+                  <mat-option value="day">Day</mat-option>
+                  <mat-option value="week">Week</mat-option>
+                  <mat-option value="month">Month</mat-option>
+                  <mat-option value="year">Year</mat-option>
                 </mat-select>
             </mat-form-field>
         </div>
 
-        <button mat-button (click)="getChartByPosition()">GO</button>
+        <button mat-raised-button (click)="getChartByPosition()">GO</button>
     </div>
     <div id="cio-report-content">
-        <span style="position: absolute;font-size: 28px;font-weight: bold; color: rgba(0, 0, 0, .54);">Time Axis</span>
-        <div class="cio-report-timeAxis">
-            <div class="cio-report-timeAxis-child">
-                <span id="timeModel_1">WEEK</span>
-                <span id="timeModel_2">MONTH</span>
-                <span id="timeModel_3">YEAR</span>
-            </div>
-            <div class="cio-report-timeAxis-child">
-                <mat-icon>chevron_left</mat-icon>
-                <mat-slider thumbLabel [displayWith]="splitTimeAxis" value='1' tickInterval="1" step="1" min="1" max="3"></mat-slider>
-                <mat-icon>chevron_right</mat-icon>
-            </div>
-        </div>
 
         <!-- <app-cio-sphere class="cio-report-third"></app-cio-sphere> -->
-        <app-cio-bar class="cio-report-half"></app-cio-bar>
+        <app-cio-bar class="cio-report-half" [selectedValue]="axisValue"></app-cio-bar>
         <app-cio-pie class="cio-report-half"></app-cio-pie>
         <!-- <app-cio-run class="cio-report-half"></app-cio-run> -->
         <!-- <app-cio-line class="cio-report-line"></app-cio-line> -->

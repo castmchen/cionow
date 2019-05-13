@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ChartServiceService } from '../../services/chart-service.service';
-import * as echarts from 'echarts';
+import * as echartss from 'echarts';
+import { ChartImp } from '../../interface/charImp';
 
 @Component({
   selector: 'app-cio-bar',
@@ -8,11 +9,15 @@ import * as echarts from 'echarts';
   styleUrls: ['./cio-bar.component.scss']
 })
 export class CioBarComponent implements OnInit {
-  private options: echarts.EChartOption;
-  private barInstance: echarts.ECharts;
+  @Input() selectedValue: any;
+  private options: echartss.EChartOption;
+  private barInstance: echartss.ECharts;
+  private OptionData = [{value: 1, name: 1}];
+  private aaaa = [];
+  private bbbb = [];
 
   constructor(private chartService: ChartServiceService) {
-    this.options = {
+    setTimeout(() => {this.options = {
       title: {
         text: 'Comparison Bar',
         subtext: 'Hour Unit'
@@ -21,7 +26,7 @@ export class CioBarComponent implements OnInit {
         trigger: 'axis'
       },
       legend: {
-        data: ['Automatic', 'Manual']
+        data: ['Automatic']
       },
       toolbox: {
         show: true,
@@ -32,10 +37,20 @@ export class CioBarComponent implements OnInit {
         }
       },
       xAxis: [
+        // {
+        //   type: 'category',
+        //   boundaryGap: true,
+        //   data: ['MON', 'TUE', 'WED', 'THUR', 'FRI', 'SAT', 'SUN']
+        // }
         {
+          boundaryGap: true, // x轴数值顶头
           type: 'category',
-          boundaryGap: true,
-          data: ['MON', 'TUE', 'WED', 'THUR', 'FRI', 'SAT', 'SUN']
+          data: this.bbbb
+          // axisLabel: {
+          //   formatter: positionPorfolioList => {
+          //     return positionPorfolioList;
+          //   }
+          // }
         }
       ],
       yAxis: [
@@ -50,18 +65,7 @@ export class CioBarComponent implements OnInit {
         {
           name: 'Automatic',
           type: 'bar',
-          data: [1, 1, 1, 1, 1, 1, 1],
-          markPoint: {
-            data: [{ type: 'max', name: 'Max' }, { type: 'min', name: 'Min' }]
-          },
-          markLine: {
-            data: [{ type: 'average', name: 'Average' }]
-          }
-        },
-        {
-          name: 'Manual',
-          type: 'bar',
-          data: [10, 10, 10, 10, 10, 10, 10],
+          data: this.aaaa,
           markPoint: {
             data: [{ type: 'max', name: 'Max' }, { type: 'min', name: 'Min' }]
           },
@@ -71,60 +75,127 @@ export class CioBarComponent implements OnInit {
         }
       ]
     };
+    }, 100);
   }
 
   ngOnInit() {
     const that = this;
     setTimeout(() => {
-      that.barInstance = echarts.getInstanceByDom(document.getElementById(
+      that.barInstance = echartss.getInstanceByDom(document.getElementById(
         'cioBar'
       ) as HTMLDivElement);
     }, 100);
 
-    this.chartService.onResetChart.subscribe(chartOptions => {
-      const automaticArray = [];
-      const manualArray = [];
-      const periodArray = [];
+    this.chartService.onResetChart.subscribe(chartOption => {
+      const chartOptionsArry = chartOption as Array<ChartImp>;
+      const map = {};
+      const  dest = [];
+      for (const ai of chartOptionsArry) {
+        if(!map[ai.portfolioEid]){
+            dest.push({
+                id: ai.portfolioEid,
+                data: [ai]
+            });
+            map[ai.portfolioEid] = ai;
+        }
+        else
+        {
+          for(const dj of dest)
+          {
+            if(dj.id === ai.portfolioEid){
+                dj.data.push(ai);
+                break;
+            }
+  
+          }
+  
+        }
+        }
 
-      for (const chartOption of chartOptions) {
-        automaticArray.unshift(chartOption.automaticValue);
-        manualArray.unshift(chartOption.manualValue);
-        periodArray.unshift(chartOption.periodTime);
-      }
-
-      this.barInstance.clear();
-      this.options.xAxis[0].data = periodArray;
-      const chartSeries = this.options.series as echarts.EChartOption.Series;
-      chartSeries[0].data = automaticArray;
-      chartSeries[1].data = manualArray;
+      this.OptionData = [];
+      dest.forEach(
+        p => {
+          let a = 0;
+          p.data.forEach(element => {
+            a = a + parseInt(element.hours);
+          });
+          this.OptionData.push({value: a, name: p.id});
+    }
+  );
+      const chartSeries = this.options.series as echartss.EChartOption.Series;
+      const xAxis = this.options.xAxis as echartss.EChartOption.Series;
+      this.aaaa = [];
+      this.bbbb = [];
+      this.OptionData.forEach(p => {
+        this.aaaa.push(p.value);
+        this.bbbb.push(p.name);
+      });
+      chartSeries[0].data = this.aaaa;
+      xAxis[0].data = this.bbbb;
       this.barInstance.setOption(this.options);
     });
 
     this.chartService.onMonitorChart.subscribe(chartOption => {
-      const periodDate = new Date(chartOption.periodTime).toLocaleDateString();
+    //   const periodDate = new Date(chartOption.periodTime).toLocaleDateString();
 
-      const currentXAxis = this.options.xAxis[0].data as [];
-      const currentIndex = currentXAxis.findIndex(_ => _ === periodDate);
-      if (currentIndex > -1) {
-        const chartSeries = this.options.series as echarts.EChartOption.Series;
+    //   const currentXAxis = this.options.xAxis[0].data as any[];
+    //   const currentIndex = currentXAxis.findIndex(_ => _ === periodDate);
+    //   if (currentIndex > -1) {
+    //     const chartSeries = this.options.series as echarts.EChartOption.Series;
 
-        for (const index in chartSeries[0].data) {
-          // tslint:disable-next-line: radix
-          if (currentIndex === parseInt(index)) {
-            chartSeries[0].data[currentIndex] += chartOption.automatica;
+    //     for (const index in chartSeries[0].data) {
+    //       // tslint:disable-next-line: radix
+    //       if (currentIndex === parseInt(index)) {
+    //         chartSeries[0].data[currentIndex] += chartOption.automatica;
+    //         break;
+    //       }
+    //     }
+
+    //     this.barInstance.setOption(this.options);
+    //   }
+    // });
+  // }
+    const chartOptionsArry = chartOption as Array<ChartImp>;
+    const map = {};
+    const  dest = [];
+    for (const ai of chartOptionsArry) {
+      if (!map[ai.portfolioEid]) {
+        dest.push({
+          id: ai.portfolioEid,
+          data: [ai]
+        });
+        map[ai.portfolioEid] = ai;
+      } else {
+        for (const dj of dest) {
+          if (dj.id === ai.portfolioEid) {
+            dj.data.push(ai);
             break;
           }
         }
-        for (const index in chartSeries[1].data) {
-          // tslint:disable-next-line: radix
-          if (currentIndex === parseInt(index)) {
-            chartSeries[1].data[currentIndex] += chartOption.manual;
-            break;
-          }
-        }
-
-        this.barInstance.setOption(this.options);
       }
+    }
+
+    this.OptionData = [];
+    dest.forEach(p => {
+      let a = 0;
+      p.data.forEach(element => {
+        a = a + parseInt(element.hours);
+      });
+      this.OptionData.push({value: a, name: p.id});
+    }
+  );
+    this.barInstance.clear();
+    const chartSeries = this.options.series as echarts.EChartOption.Series;
+    const xAxis = this.options.xAxis as echarts.EChartOption.Series;
+    const aaaa = [];
+    const bbbb = [];
+    this.OptionData.forEach(p => {
+      aaaa.push(p.value);
+      bbbb.push(p.name);
     });
-  }
+    chartSeries[0].data = bbbb;
+    xAxis[0].data = bbbb;
+    this.barInstance.setOption(this.options);
+  });
+}
 }
