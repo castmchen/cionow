@@ -12,7 +12,7 @@ $third:30%;
 }
 
 #cio-report-filter {
-    height: 10%;
+    height: 25%;
     width: 95%;
     display: flex;
     flex-flow: row nowrap;
@@ -25,14 +25,12 @@ $third:30%;
         align-items: center;
     }
     button {
-        height: 90px;
-        width: 90px;
-        font-size: xx-large;
+        height: 35;
+        width: 250px;
         font-weight: bold;
-        font-family: fantasy;
-        color: darkturquoise;
-        border-radius: 50%;
-        // box-shadow: 10px 10px 20px;
+        position:absolute;
+        right: 35px;
+        top:54px
     }
 }
 
