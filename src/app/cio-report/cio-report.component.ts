@@ -121,7 +121,7 @@ export class CioReportComponent implements OnInit {
                   that.selectedLeader.eid === newChartOption.leaderEid &&
                   that.selectedManager.eid === newChartOption.managerEid);
               if (isNeedRefresh) {
-                tempEid = newChartOption.agentName;
+                tempEid = newChartOption.clientName;
               }
               break;
             }
@@ -193,7 +193,7 @@ export class CioReportComponent implements OnInit {
           break;
         }
         case 4: {
-          tempEid = callbackChartItem.agentName;
+          tempEid = callbackChartItem.clientName;
           break;
         }
       }
@@ -220,7 +220,7 @@ export class CioReportComponent implements OnInit {
     }
     this.currentPeriodEnd = new Date().getTime();
     let tempTime = this.currentPeriodEnd;
-    switch (this.currentPeriodModel) {
+    switch (this.currentPeriodModel * 1) {
       case 1: {
         tempTime = tempTime - 1000 * 60 * 15;
         break;
@@ -285,6 +285,9 @@ export class CioReportComponent implements OnInit {
         case 0: {
           this.positionLeaderList = [];
           this.positionManagerList = [];
+          this.selectedMD=null;
+          this.selectedLeader=null;
+          this.selectedManager=null;
 
           const targetPositions = [];
           this.positionCache.forEach(_ => {
@@ -302,7 +305,7 @@ export class CioReportComponent implements OnInit {
         }
         case 1: {
           this.positionManagerList = [];
-
+          this.selectedManager=null;
           const targetPositions = [];
           this.positionCache.forEach(_ => {
             if (_.eid === this.selectedPorfolio.eid) {
