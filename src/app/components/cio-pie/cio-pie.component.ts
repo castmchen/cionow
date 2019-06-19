@@ -66,7 +66,7 @@ export class CioPieComponent implements OnInit {
       that.pieInstance = echart.getInstanceByDom(document.getElementById(
         'cioPie'
       ) as HTMLDivElement);
-    }, 50);
+    }, 100);
 
     this.chartService.onResetChart.subscribe(result => {
       const chartSeries = this.options.series as echart.EChartOption.Series;

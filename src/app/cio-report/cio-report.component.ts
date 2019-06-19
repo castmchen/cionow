@@ -1,4 +1,3 @@
-import { RequestBodyImp } from './../interface/requestBodyImp';
 import { PositionImp } from './../interface/positionImp';
 import { ChartServiceService } from './../services/chart-service.service';
 import { Component, OnInit } from '@angular/core';
@@ -24,7 +23,7 @@ export class CioReportComponent implements OnInit {
   private selectedMD: PositionImp = null;
   private selectedLeader: PositionImp = null;
   private selectedManager: PositionImp = null;
-  private currentPeriodModel: number = null;
+  private currentPeriodModel: string;
   private currentPeriodStart: number;
   private currentPeriodEnd: number;
   private isLoadingFlag: boolean;
@@ -58,7 +57,7 @@ export class CioReportComponent implements OnInit {
     if (this.ws != null) {
       this.ws.close();
     }
-    this.ws = new WebSocket('ws://localhost:8080/realtime');
+    this.ws = new WebSocket('ws://localhost:8081/realtime');
     this.ws.onopen = event => {
       console.log('WS has connected successfully.');
     };
@@ -216,25 +215,40 @@ export class CioReportComponent implements OnInit {
 
   private setupPeriod() {
     if (this.currentPeriodModel == null) {
-      this.currentPeriodModel = 1;
+      this.currentPeriodModel = '1';
     }
-    this.currentPeriodEnd = new Date().getTime();
-    let tempTime = this.currentPeriodEnd;
-    switch (this.currentPeriodModel * 1) {
-      case 1: {
-        tempTime = tempTime - 1000 * 60 * 15;
+
+    const periodEndDate = new Date();
+    this.currentPeriodEnd = periodEndDate.getTime();
+    switch (this.currentPeriodModel) {
+      case '1': {
+        this.currentPeriodStart = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth(), periodEndDate.getDate() - 1).getTime();
         break;
       }
-      case 2: {
-        tempTime = tempTime - 1000 * 60 * 30;
+      case '2': {
+        this.currentPeriodStart = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth(), periodEndDate.getDate() - 3).getTime();
         break;
       }
-      case 3: {
-        tempTime = tempTime - 1000 * 60 * 60;
+      case '3': {
+        this.currentPeriodStart = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth(), periodEndDate.getDate() - 7).getTime();
         break;
+      }
+      case '4': {
+        this.currentPeriodStart = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth() - 1, periodEndDate.getDate()).getTime();
+        break;
+      }
+      case '5': {
+        this.currentPeriodStart = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth() - 6, periodEndDate.getDate()).getTime();
+        break;
+      }
+      case '6': {
+        this.currentPeriodStart = new Date(periodEndDate.getFullYear() - 1, periodEndDate.getMonth(), periodEndDate.getDate()).getTime();
+        break;
+      }
+      default:{
+        this.currentPeriodStart = this.currentPeriodEnd;
       }
     }
-    this.currentPeriodStart = tempTime;
   }
 
   private setupLowerPositions(

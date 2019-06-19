@@ -13,7 +13,7 @@ export class ChartServiceService {
       'Content-type': 'application/json'
     })
   };
-  private baseUrl = 'http://localhost:8080';
+  private baseUrl = 'http://localhost:8081';
   public onResetChart: EventEmitter<any> = new EventEmitter<any>();
   public onResetChartPie: EventEmitter<any> = new EventEmitter<any>();
 

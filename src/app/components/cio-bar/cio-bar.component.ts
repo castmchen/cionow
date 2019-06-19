@@ -11,6 +11,7 @@ export class CioBarComponent implements OnInit {
   @Input() selectedValue: any;
   private options: echart.EChartOption;
   private barInstance: echart.ECharts;
+  private isShowFlag: boolean= false;
 
   constructor(private chartService: ChartServiceService) {
     this.options = {
@@ -29,7 +30,8 @@ export class CioBarComponent implements OnInit {
         feature: {
           mark: { show: true },
           dataView: { show: true, readOnly: false },
-          saveAsImage: { show: true }
+          magicType : {show: true, type: ['line', 'bar']},
+          saveAsImage: { show: true },
         }
       },
       xAxis: [
@@ -67,15 +69,23 @@ export class CioBarComponent implements OnInit {
       that.barInstance = echart.getInstanceByDom(document.getElementById(
         'cioBar'
       ) as HTMLDivElement);
-    }, 50);
+    }, 100);
 
     this.chartService.onResetChart.subscribe(result => {
-      const chartSeries = this.options.series as echart.EChartOption.Series;
-      const xAxis = this.options.xAxis as echart.EChartOption.Series;
+      this.isShowFlag = result && result.length;
+      if (this.isShowFlag) {
+        if (!this.barInstance) {
+          that.barInstance = echart.getInstanceByDom(document.getElementById(
+            'cioBar'
+          ) as HTMLDivElement);
+          }
+        const chartSeries = this.options.series as echart.EChartOption.Series;
+        const xAxis = this.options.xAxis as echart.EChartOption.Series;
 
-      xAxis[0].data = result.map(_ => _.name);
-      chartSeries[0].data = result.map(_ => _.value);
-      this.barInstance.setOption(this.options);
+        xAxis[0].data = result.map(_ => _.name);
+        chartSeries[0].data = result.map(_ => _.value);
+        this.barInstance.setOption(this.options);
+        }
     });
 
     this.chartService.onMonitorChart.subscribe(result => {

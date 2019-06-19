@@ -5,34 +5,56 @@ $third:30%;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
-    align-content: space-around;
+    align-content: space-between;
     width: 100%;
     height: 100%;
     color: rgba(0, 0, 0, .54);
+    box-shadow: #495060 1px 1px 5px 5px;
 }
 
 #cio-report-filter {
     height: 20%;
     width: 95%;
     display: flex;
-    flex-flow: row nowrap;
+    flex-flow: row wrap;
     justify-content: space-between;
     border-bottom: 1px solid #e9eaec;
-    app-cio-dropdown {
+    .app-cio-dropdown {
         width: 20%;
+        height: 60%;
         position: relative;
         display: flex;
-        align-items: center;
+        align-items: flex-end;
+        .cio-dropdown-options {
+            width: 100%;
+        }
+    }
+    .app-cio-search-blank{
+        width: 80%;
+    }
+    .app-cio-search{
+        width: 20%;
+        height: 30%;
+        button{
+            font-size: 25px;
+            font-weight: bold;
+            width: 100%;
+            height: 75%;
+            background: #495060;
+            color: #ffffff;
+        }
     }
 }
 
 #cio-report-content {
-    height: 88%;
-    width: 100%;
+    height: 74%;
+    width: 98%;
     display: flex;
     flex-flow: row wrap;
     justify-content: space-around;
     align-content: space-around;
+    box-shadow: 1px 1px 10px 1px #495060 inset;
+    border-radius: 15px;
     .cio-report-half {
         width: 48%;
         height: 70%;
@@ -56,7 +78,15 @@ $third:30%;
     }
 }
 
-.cio-report-timeAxis {
+#cio-report-footer{
+    width: 100%;
+    height: 5%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #495060;
+}
+.cio-report-Period {
     width: 80%;
     height: 10%;
     display: flex;
@@ -71,7 +101,7 @@ $third:30%;
         display: block;
         height: 48px;
     }
-    .cio-report-timeAxis-child {
+    .cio-report-Period-child {
         width: 80%;
         display: flex;
         justify-content: space-between;
@@ -81,7 +111,7 @@ $third:30%;
             text-align: center;
         }
     }
-    .cio-report-timeAxis-child:first-child {
+    .cio-report-Period-child:first-child {
         background: #ffced3;
         color: #ffffff;
     }
@@ -108,9 +138,6 @@ mat-icon {
         height: 20%;
         width: 100%;
         font-weight: bold;
-        position: absolute;
-        line-height: 50%;
-        top:70%;
     }
 }
 

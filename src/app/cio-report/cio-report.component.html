@@ -1,6 +1,6 @@
 <div id="cio-report">
     <div id="cio-report-filter">
-        <div class="cio-dropdown">
+        <div class="app-cio-dropdown">
             <mat-form-field class="cio-dropdown-options">
                 <mat-label>Porfolio</mat-label>
                 <mat-select [(value)]="selectedPorfolio" (selectionChange)="changePosition($event)">
@@ -11,7 +11,7 @@
             </mat-form-field>
         </div>
 
-        <div class="cio-dropdown">
+        <div class="app-cio-dropdown">
             <mat-form-field class="cio-dropdown-options">
                 <mat-label>MD</mat-label>
                 <mat-select [(value)]="selectedMD" (selectionChange)="changePosition($event)">
@@ -22,7 +22,7 @@
             </mat-form-field>
         </div>
 
-        <div class="cio-dropdown">
+        <div class="app-cio-dropdown">
             <mat-form-field class="cio-dropdown-options">
                 <mat-label>OPS Leader</mat-label>
                 <mat-select [(value)]="selectedLeader" (selectionChange)="changePosition($event)">
@@ -33,7 +33,7 @@
             </mat-form-field>
         </div>
 
-        <div class="cio-dropdown">
+        <div class="app-cio-dropdown">
             <mat-form-field class="cio-dropdown-options">
                 <mat-label>Manager</mat-label>
                 <mat-select [(value)]="selectedManager" (selectionChange)="changePosition($event)">
@@ -44,16 +44,26 @@
             </mat-form-field>
         </div>
 
-        <div class="cio-dropdown">
+        <div class="app-cio-dropdown">
             <mat-form-field class="cio-dropdown-options">
-                <mat-label>TimeAxis</mat-label>
+                <mat-label>Period</mat-label>
                 <mat-select [(value)]="currentPeriodModel">
-                    <mat-option value="1">Lasted 15 Minutes</mat-option>
-                    <mat-option value="2">Lasted 30 Minutes</mat-option>
-                    <mat-option value="3">Lasted 1 Hour</mat-option>
+                    <mat-option value="1">Lasted 1 Day</mat-option>
+                    <mat-option value="2">Lasted 3 Days</mat-option>
+                    <mat-option value="3">Lasted 7 Days</mat-option>
+                    <mat-option value="4">Lasted 1 Month</mat-option>
+                    <mat-option value="5">Lasted 6 Months</mat-option>
+                    <mat-option value="6">Lasted 1 Year</mat-option>
                 </mat-select>
             </mat-form-field>
-            <button mat-raised-button (click)="getChartByPosition()">GO</button>
+        </div>
+
+        <div class="app-cio-search-blank">
+            
+        </div>
+
+        <div class="app-cio-search">
+            <button mat-raised-button (click)="getChartByPosition()">Search</button>
         </div>
 
     </div>
@@ -64,6 +74,15 @@
         <app-cio-pie class="cio-report-half"></app-cio-pie>
         <!-- <app-cio-run class="cio-report-half"></app-cio-run> -->
         <!-- <app-cio-line class="cio-report-line"></app-cio-line> -->
+    </div>
+
+    <div id="cio-report-footer">
+        <span>@Copyright 2019 Accenture. Accenture Confidential. For internal use only. 
+            <span style="font-size: 17px; color:black">| </span> 
+            <span style="color: blue">
+            @china.swf.cio.cio001.TE.myTEdev.Scrums.Scrum3@accenture.com
+            </span>
+        </span>
     </div>
 
     <div id="cio-loading" *ngIf="isLoadingFlag">
