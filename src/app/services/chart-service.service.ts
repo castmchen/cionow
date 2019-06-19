@@ -13,7 +13,7 @@ export class ChartServiceService {
       'Content-type': 'application/json'
     })
   };
-  private baseUrl = 'https://cionowapi.azurewebsites.net';
+  private baseUrl = 'http://cionowapi.azurewebsites.net';
   public onResetChart: EventEmitter<any> = new EventEmitter<any>();
   public onResetChartPie: EventEmitter<any> = new EventEmitter<any>();
 
