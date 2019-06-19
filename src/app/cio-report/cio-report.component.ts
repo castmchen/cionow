@@ -57,7 +57,7 @@ export class CioReportComponent implements OnInit {
     if (this.ws != null) {
       this.ws.close();
     }
-    this.ws = new WebSocket('ws://localhost:8081/realtime');
+    this.ws = new WebSocket('ws://cionowapi.azurewebsites.net/realtime');
     this.ws.onopen = event => {
       console.log('WS has connected successfully.');
     };
