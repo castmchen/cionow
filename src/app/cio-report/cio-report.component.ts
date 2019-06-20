@@ -19,14 +19,14 @@ export class CioReportComponent implements OnInit {
   public positionManagerList: PositionImp[] = [];
   public positionCache: LowerPositions[] = [];
 
-  private selectedPorfolio: PositionImp = null;
-  private selectedMD: PositionImp = null;
-  private selectedLeader: PositionImp = null;
-  private selectedManager: PositionImp = null;
-  private currentPeriodModel: string;
-  private currentPeriodStart: number;
-  private currentPeriodEnd: number;
-  private isLoadingFlag: boolean;
+  public selectedPorfolio: PositionImp = null;
+  public selectedMD: PositionImp = null;
+  public selectedLeader: PositionImp = null;
+  public selectedManager: PositionImp = null;
+  public currentPeriodModel: string;
+  public currentPeriodStart: number;
+  public currentPeriodEnd: number;
+  public isLoadingFlag: boolean;
 
   constructor(private chartService: ChartServiceService) {}
 

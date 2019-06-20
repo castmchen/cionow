@@ -8,8 +8,8 @@ import { ChartServiceService } from '../../services/chart-service.service';
   styleUrls: ['./cio-pie.component.scss']
 })
 export class CioPieComponent implements OnInit {
-  private options: echart.EChartOption;
-  private pieInstance: echart.ECharts;
+   options: echart.EChartOption;
+   pieInstance: echart.ECharts;
 
   constructor(private chartService: ChartServiceService) {
     this.options = {

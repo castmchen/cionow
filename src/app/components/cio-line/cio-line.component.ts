@@ -8,8 +8,8 @@ import * as echarts from 'echarts';
   styleUrls: ['./cio-line.component.scss']
 })
 export class CioLineComponent implements OnInit {
-  private options: echarts.EChartOption;
-  private lineInstance: echarts.ECharts;
+   options: echarts.EChartOption;
+   lineInstance: echarts.ECharts;
 
   constructor(private chartService: ChartServiceService) {
     this.options = {

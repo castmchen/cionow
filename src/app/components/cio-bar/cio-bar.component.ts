@@ -9,9 +9,9 @@ import * as echart from 'echarts';
 })
 export class CioBarComponent implements OnInit {
   @Input() selectedValue: any;
-  private options: echart.EChartOption;
-  private barInstance: echart.ECharts;
-  private isShowFlag: boolean= false;
+  options: echart.EChartOption;
+  barInstance: echart.ECharts;
+  isShowFlag = false;
 
   constructor(private chartService: ChartServiceService) {
     this.options = {

@@ -21,7 +21,7 @@ export class CioSphereComponent implements OnInit {
   //     }
   //   ]
   // };
-  private options: any = {
+   options: any = {
     backgroundColor: '#000',
     globe: {
       baseTexture: 'data-gl/asset/world.topo.bathy.200401.jpg',

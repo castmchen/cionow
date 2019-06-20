@@ -7,7 +7,7 @@ import { EChartOption } from 'echarts';
   styleUrls: ['./cio-run.component.scss']
 })
 export class CioRunComponent implements OnInit {
-  private options: EChartOption = {
+  options: EChartOption = {
     xAxis: {
       type: 'category',
       data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
