@@ -45,7 +45,7 @@ export class CioReportComponent implements OnInit {
     });
     this.chartService.filterbypositionandperiod().subscribe(result => {
       this.isLoadingFlag = false;
-      if (result !== 'fail') {
+      if (result != 'fail') {
         const charData = this.setupChartData(result as Array<ChartImp>);
         this.chartService.triggerResetChart(charData);
       }
