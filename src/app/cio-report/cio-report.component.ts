@@ -224,30 +224,36 @@ export class CioReportComponent implements OnInit {
     this.currentPeriodEnd = periodEndDate.getTime();
     switch (this.currentPeriodModel) {
       case '1': {
-        this.currentPeriodStart = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth(), periodEndDate.getDate() - 1).getTime();
+        this.currentPeriodStart = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth(), periodEndDate.getDate() - 1,
+         periodEndDate.getHours(), periodEndDate.getMilliseconds(), periodEndDate.getSeconds()).getTime();
         break;
       }
       case '2': {
-        this.currentPeriodStart = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth(), periodEndDate.getDate() - 3).getTime();
+        this.currentPeriodStart = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth(), periodEndDate.getDate() - 3,
+        periodEndDate.getHours(), periodEndDate.getMilliseconds(), periodEndDate.getSeconds()).getTime();
         break;
       }
       case '3': {
-        this.currentPeriodStart = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth(), periodEndDate.getDate() - 7).getTime();
+        this.currentPeriodStart = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth(), periodEndDate.getDate() - 7,
+        periodEndDate.getHours(), periodEndDate.getMilliseconds(), periodEndDate.getSeconds()).getTime();
         break;
       }
       case '4': {
-        this.currentPeriodStart = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth() - 1, periodEndDate.getDate()).getTime();
+        this.currentPeriodStart = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth() - 1, periodEndDate.getDate(),
+        periodEndDate.getHours(), periodEndDate.getMilliseconds(), periodEndDate.getSeconds()).getTime();
         break;
       }
       case '5': {
-        this.currentPeriodStart = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth() - 6, periodEndDate.getDate()).getTime();
+        this.currentPeriodStart = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth() - 6, periodEndDate.getDate(),
+        periodEndDate.getHours(), periodEndDate.getMilliseconds(), periodEndDate.getSeconds()).getTime();
         break;
       }
       case '6': {
-        this.currentPeriodStart = new Date(periodEndDate.getFullYear() - 1, periodEndDate.getMonth(), periodEndDate.getDate()).getTime();
+        new Date(periodEndDate.getFullYear() - 1, periodEndDate.getMonth(), periodEndDate.getDate(),
+         periodEndDate.getHours(), periodEndDate.getMilliseconds(), periodEndDate.getSeconds()).getTime();
         break;
       }
-      default:{
+      default: {
         this.currentPeriodStart = this.currentPeriodEnd;
       }
     }
