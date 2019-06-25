@@ -49,14 +49,12 @@ $third:30%;
     height: 74%;
     width: 98%;
     display: flex;
-    display: -webkit-inline-flex;
     align-items: center;
     flex-flow: row wrap;
     justify-content: space-around;
     align-content: space-around;
     box-shadow: 1px 1px 10px 1px #495060 inset;
     border-radius: 15px;
-    text-align: center;
 
     .cio-report-half {
         width: 40%;
