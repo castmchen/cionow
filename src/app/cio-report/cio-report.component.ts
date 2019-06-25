@@ -13,13 +13,13 @@ import { LowerPositions } from '../interface/lowerPosion';
 })
 export class CioReportComponent implements OnInit {
   public ws: WebSocket;
-  public positionPorfolioList: PositionImp[] = [];
+  public positionPortfolioList: PositionImp[] = [];
   public positionMDList: PositionImp[] = [];
   public positionLeaderList: PositionImp[] = [];
   public positionManagerList: PositionImp[] = [];
   public positionCache: LowerPositions[] = [];
 
-  public selectedPorfolio: PositionImp = null;
+  public selectedPortfolio: PositionImp = null;
   public selectedMD: PositionImp = null;
   public selectedLeader: PositionImp = null;
   public selectedManager: PositionImp = null;
@@ -36,10 +36,10 @@ export class CioReportComponent implements OnInit {
     this.setupPeriod();
     this.chartService.getDefaultLevel().subscribe(result => {
       this.positionCache = result as LowerPositions[];
-      for (const positionPorfolioItem of this.positionCache) {
-        this.positionPorfolioList.push({
-          level: positionPorfolioItem.level,
-          eid: positionPorfolioItem.eid
+      for (const positionPortfolioItem of this.positionCache) {
+        this.positionPortfolioList.push({
+          level: positionPortfolioItem.level,
+          eid: positionPortfolioItem.eid
         } as PositionImp);
       }
     });
@@ -87,7 +87,7 @@ export class CioReportComponent implements OnInit {
             case 1: {
               isNeedRefresh =
                 isNeedRefresh &&
-                that.selectedPorfolio.eid === newChartOption.portfolioEid;
+                that.selectedPortfolio.eid === newChartOption.portfolioEid;
               if (isNeedRefresh) {
                 tempEid = newChartOption.mdEid;
               }
@@ -96,7 +96,7 @@ export class CioReportComponent implements OnInit {
             case 2: {
               isNeedRefresh =
                 isNeedRefresh &&
-                (that.selectedPorfolio.eid === newChartOption.portfolioEid &&
+                (that.selectedPortfolio.eid === newChartOption.portfolioEid &&
                   that.selectedMD.eid === newChartOption.mdEid);
               if (isNeedRefresh) {
                 tempEid = newChartOption.leaderEid;
@@ -106,7 +106,7 @@ export class CioReportComponent implements OnInit {
             case 3: {
               isNeedRefresh =
                 isNeedRefresh &&
-                (that.selectedPorfolio.eid === newChartOption.portfolioEid &&
+                (that.selectedPortfolio.eid === newChartOption.portfolioEid &&
                   that.selectedMD.eid === newChartOption.mdEid &&
                   that.selectedLeader.eid === newChartOption.leaderEid);
               if (isNeedRefresh) {
@@ -117,7 +117,7 @@ export class CioReportComponent implements OnInit {
             case 4: {
               isNeedRefresh =
                 isNeedRefresh &&
-                (that.selectedPorfolio.eid === newChartOption.portfolioEid &&
+                (that.selectedPortfolio.eid === newChartOption.portfolioEid &&
                   that.selectedMD.eid === newChartOption.mdEid &&
                   that.selectedLeader.eid === newChartOption.leaderEid &&
                   that.selectedManager.eid === newChartOption.managerEid);
@@ -153,7 +153,7 @@ export class CioReportComponent implements OnInit {
 
   private checkCurrentPositionLevel() {
     let currentSelectedPositionLevel: number = null;
-    if (this.selectedPorfolio == null) {
+    if (this.selectedPortfolio == null) {
       currentSelectedPositionLevel = 0;
     } else if (this.selectedMD == null) {
       currentSelectedPositionLevel = 1;
@@ -307,9 +307,9 @@ export class CioReportComponent implements OnInit {
         case 0: {
           this.positionLeaderList = [];
           this.positionManagerList = [];
-          this.selectedMD=null;
-          this.selectedLeader=null;
-          this.selectedManager=null;
+          this.selectedMD = null;
+          this.selectedLeader = null;
+          this.selectedManager = null;
 
           const targetPositions = [];
           this.positionCache.forEach(_ => {
@@ -331,7 +331,7 @@ export class CioReportComponent implements OnInit {
           this.selectedLeader = null;
           const targetPositions = [];
           this.positionCache.forEach(_ => {
-            if (_.eid === this.selectedPorfolio.eid) {
+            if (_.eid === this.selectedPortfolio.eid) {
               _.lowerPositions.forEach(__ => {
                 if (__.eid === this.selectedMD.eid) {
                   __.lowerPositions.forEach(___ => {
@@ -350,7 +350,7 @@ export class CioReportComponent implements OnInit {
         case 2: {
           const targetPositions = [];
           this.positionCache.forEach(_ => {
-            if (_.eid === this.selectedPorfolio.eid) {
+            if (_.eid === this.selectedPortfolio.eid) {
               _.lowerPositions.forEach(__ => {
                 if (__.eid === this.selectedMD.eid) {
                   __.lowerPositions.forEach(___ => {
@@ -384,8 +384,8 @@ export class CioReportComponent implements OnInit {
       periodEnd: this.currentPeriodEnd,
       periodStart: this.currentPeriodStart
     };
-    if (this.selectedPorfolio) {
-      requestInfo.portfolioEid = this.selectedPorfolio.eid;
+    if (this.selectedPortfolio) {
+      requestInfo.portfolioEid = this.selectedPortfolio.eid;
     }
     if (this.selectedMD) {
       requestInfo.mdEid = this.selectedMD.eid;

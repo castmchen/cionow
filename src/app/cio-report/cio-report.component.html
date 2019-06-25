@@ -2,9 +2,9 @@
     <div id="cio-report-filter">
         <div class="app-cio-dropdown">
             <mat-form-field class="cio-dropdown-options">
-                <mat-label>Porfolio</mat-label>
-                <mat-select [(value)]="selectedPorfolio" (selectionChange)="changePosition($event)">
-                    <mat-option *ngFor="let position of this.positionPorfolioList" [value]="position">
+                <mat-label>Portfolio</mat-label>
+                <mat-select [(value)]="selectedPortfolio" (selectionChange)="changePosition($event)">
+                    <mat-option *ngFor="let position of this.positionPortfolioList" [value]="position">
                         {{position.eid}}
                     </mat-option>
                 </mat-select>
