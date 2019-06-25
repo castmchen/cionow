@@ -29,9 +29,9 @@ export class CioBarComponent implements OnInit {
         show: true,
         feature: {
           mark: { show: true },
-          dataView: { show: true, title: ' DataView ', readOnly: false },
+          dataView: { show: true, title: 'DataView', readOnly: false },
           magicType : {show: true, title: {line: 'Line Graph', bar: 'Bar Graph'}, type: ['line', 'bar']},
-          saveAsImage: { show: true, title: 'Download ' },
+          saveAsImage: { show: true, title: 'Download           ' },
           }
       },
       xAxis: [

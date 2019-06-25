@@ -327,7 +327,8 @@ export class CioReportComponent implements OnInit {
         }
         case 1: {
           this.positionManagerList = [];
-          this.selectedManager=null;
+          this.selectedManager = null;
+          this.selectedLeader = null;
           const targetPositions = [];
           this.positionCache.forEach(_ => {
             if (_.eid === this.selectedPorfolio.eid) {
