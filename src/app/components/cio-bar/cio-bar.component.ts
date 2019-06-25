@@ -27,12 +27,12 @@ export class CioBarComponent implements OnInit {
       },
       toolbox: {
         show: true,
-        feature: {
-          mark: { show: true },
-          dataView: { show: true, readOnly: false },
-          magicType : {show: true, type: ['line', 'bar']},
-          saveAsImage: { show: true },
-        }
+        feature: {
+          mark: { show: true },
+          dataView: { show: true, title: ' DataView ', readOnly: false },
+          magicType : {show: true, title: {line: 'Line Graph', bar: 'Line Graph'}, type: ['line', 'bar']},
+          saveAsImage: { show: true, title: 'Download ' },
+          }
       },
       xAxis: [
         {

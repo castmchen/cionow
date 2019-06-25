@@ -73,6 +73,11 @@ export class CioPieComponent implements OnInit {
 
       chartSeries[0].data = result;
       chartSeries[0].legend = result.map(_ => _.name);
+      if (typeof this.pieInstance === 'undefined') {
+        this.pieInstance = echart.getInstanceByDom(document.getElementById(
+          'cioPie'
+        ) as HTMLDivElement);
+      }
       this.pieInstance.setOption(this.options);
     });
 
