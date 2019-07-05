@@ -45,13 +45,41 @@ export class CioReportComponent implements OnInit {
     });
     this.chartService.filterbypositionandperiod().subscribe(result => {
       this.isLoadingFlag = false;
-      if (result != 'fail') {
+      if (result !== 'fail') {
         const charData = this.setupChartData(result as Array<ChartImp>);
         this.chartService.triggerResetChart(charData);
       }
     });
 
     this.connectWS();
+  }
+
+  onClearPositionClick(event) {
+    switch (event.level) {
+      case 0:
+        this.selectedPortfolio = this.selectedMD = this.selectedLeader = this.selectedManager = null;
+        this.positionMDList = this.positionLeaderList = this.positionManagerList = [];
+        break;
+      case 1:
+        this.selectedMD = this.selectedLeader = this.selectedManager = null;
+        this.positionLeaderList = this.positionManagerList = [];
+        break;
+      case 2:
+        this.selectedLeader = this.selectedManager = null;
+        this.positionManagerList = [];
+        break;
+      case 3:
+        this.selectedManager = null;
+        break;
+      default:
+        break;
+    }
+    this.getChartByPosition();
+  }
+
+  onCurrentPeriodClick() {
+    this.currentPeriodModel = '1';
+    this.getChartByPosition();
   }
 
   connectWS() {
@@ -225,32 +253,32 @@ export class CioReportComponent implements OnInit {
     switch (this.currentPeriodModel) {
       case '1': {
         this.currentPeriodStart = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth(), periodEndDate.getDate() - 1,
-         periodEndDate.getHours(), periodEndDate.getMilliseconds(), periodEndDate.getSeconds()).getTime();
+          periodEndDate.getHours(), periodEndDate.getMilliseconds(), periodEndDate.getSeconds()).getTime();
         break;
       }
       case '2': {
         this.currentPeriodStart = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth(), periodEndDate.getDate() - 3,
-        periodEndDate.getHours(), periodEndDate.getMilliseconds(), periodEndDate.getSeconds()).getTime();
+          periodEndDate.getHours(), periodEndDate.getMilliseconds(), periodEndDate.getSeconds()).getTime();
         break;
       }
       case '3': {
         this.currentPeriodStart = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth(), periodEndDate.getDate() - 7,
-        periodEndDate.getHours(), periodEndDate.getMilliseconds(), periodEndDate.getSeconds()).getTime();
+          periodEndDate.getHours(), periodEndDate.getMilliseconds(), periodEndDate.getSeconds()).getTime();
         break;
       }
       case '4': {
         this.currentPeriodStart = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth() - 1, periodEndDate.getDate(),
-        periodEndDate.getHours(), periodEndDate.getMilliseconds(), periodEndDate.getSeconds()).getTime();
+          periodEndDate.getHours(), periodEndDate.getMilliseconds(), periodEndDate.getSeconds()).getTime();
         break;
       }
       case '5': {
         this.currentPeriodStart = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth() - 6, periodEndDate.getDate(),
-        periodEndDate.getHours(), periodEndDate.getMilliseconds(), periodEndDate.getSeconds()).getTime();
+          periodEndDate.getHours(), periodEndDate.getMilliseconds(), periodEndDate.getSeconds()).getTime();
         break;
       }
       case '6': {
         new Date(periodEndDate.getFullYear() - 1, periodEndDate.getMonth(), periodEndDate.getDate(),
-         periodEndDate.getHours(), periodEndDate.getMilliseconds(), periodEndDate.getSeconds()).getTime();
+          periodEndDate.getHours(), periodEndDate.getMilliseconds(), periodEndDate.getSeconds()).getTime();
         break;
       }
       default: {
@@ -373,6 +401,7 @@ export class CioReportComponent implements OnInit {
         }
       }
 
+      this.getChartByPosition();
       this.isLoadingFlag = false;
     }
   }
