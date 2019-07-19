@@ -1,8 +1,8 @@
+import { environment } from './../../environments/environment';
 import { RequestBodyImp } from './../interface/requestBodyImp';
 import { PositionImp } from './../interface/positionImp';
 import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { ChartImp } from '../interface/charImp';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +13,7 @@ export class ChartServiceService {
       'Content-type': 'application/json'
     })
   };
-  private baseUrl = 'http://cionowapi.azurewebsites.net';
+  private baseUrl = environment.baseUrl;
   public onResetChart: EventEmitter<any> = new EventEmitter<any>();
   public onResetChartPie: EventEmitter<any> = new EventEmitter<any>();
 
