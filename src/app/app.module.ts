@@ -14,6 +14,7 @@ import { CioRunComponent } from './components/cio-run/cio-run.component';
 import { CioDropdownComponent } from './controls/cio-dropdown/cio-dropdown.component';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { HttpClientModule } from '@angular/common/http';
+import { CioPieTypeComponent } from './components/cio-pie-type/cio-pie-type.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { HttpClientModule } from '@angular/common/http';
     CioSphereComponent,
     CioReportComponent,
     CioRunComponent,
-    CioDropdownComponent
+    CioDropdownComponent,
+    CioPieTypeComponent
   ],
   imports: [
     BrowserAnimationsModule,

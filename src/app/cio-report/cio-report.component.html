@@ -67,9 +67,9 @@
           <mat-option value="5">Lasted 6 Months</mat-option>
           <mat-option value="6">Lasted 1 Year</mat-option>
         </mat-select>
-        <button mat-icon-button *ngIf="currentPeriodModel" (click)="onCurrentPeriodClick()">
+        <!-- <button mat-icon-button *ngIf="currentPeriodModel" (click)="onCurrentPeriodClick()">
                 <mat-icon>close</mat-icon>
-        </button>
+        </button> -->
       </mat-form-field>
     </div>
 
@@ -79,9 +79,14 @@
 
   </div>
   <div id="cio-report-content">
+    <div class="cio-line-chart">
+      <app-cio-bar [periodModel]="currentPeriodModel"></app-cio-bar>
+    </div>
+    <div class="cio-pie-chart">
+      <app-cio-pie class="cio-pie-chart-half cio-pie-chart-half-first"></app-cio-pie>
+      <app-cio-pie-type class="cio-pie-chart-half"></app-cio-pie-type>
+    </div>
     <!-- <app-cio-sphere class="cio-report-third"></app-cio-sphere> -->
-    <app-cio-bar class="cio-report-half"></app-cio-bar>
-    <app-cio-pie class="cio-report-half"></app-cio-pie>
     <!-- <app-cio-run class="cio-report-half"></app-cio-run> -->
     <!-- <app-cio-line class="cio-report-line"></app-cio-line> -->
   </div>

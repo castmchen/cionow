@@ -1,6 +1,10 @@
 .cio-pie {
-    position: relative;
     width: 100%;
-    height: 100%;
+    height: 50%;
     margin: auto;
+    padding: 15px;
+}
+
+.cio-pie:first{
+    border-bottom: 1px solid #e9eaec;
 }

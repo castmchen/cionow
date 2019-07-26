@@ -14,9 +14,12 @@ export class ChartServiceService {
     })
   };
   private baseUrl = environment.baseUrl;
-  public onResetChart: EventEmitter<any> = new EventEmitter<any>();
-  public onResetChartPie: EventEmitter<any> = new EventEmitter<any>();
 
+  public onResetChart: EventEmitter<any> = new EventEmitter<any>();
+  // tslint:disable-next-line: variable-name
+  public onResetChartPie_Position: EventEmitter<any> = new EventEmitter<any>();
+  // tslint:disable-next-line: variable-name
+  public onResetChartPie_Type: EventEmitter<any> = new EventEmitter<any>();
   public onMonitorChart: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(private http: HttpClient) {}
@@ -82,13 +85,18 @@ export class ChartServiceService {
     return timePeriod;
   }
 
-  public triggerResetChart(charOptions) {
+  public triggerResetChart(charOptions: any) {
     this.onResetChart.emit(charOptions);
   }
 
-  public triggerResetChartPie(charOptions) {
-    this.onResetChartPie.emit(charOptions);
+  public triggerResetTypeChartPie(charOptions: Array<any>) {
+    this.onResetChartPie_Type.emit(charOptions);
   }
+
+  public triggerResetPositionChartPie(charOptions: Array<any>) {
+    this.onResetChartPie_Position.emit(charOptions);
+  }
+
   public triggerMonitorChart(chartOption) {
     this.onMonitorChart.emit(chartOption);
   }

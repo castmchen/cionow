@@ -9,4 +9,5 @@ export interface ChartImp {
   eventTime: Date;
   periodStart: Date;
   periodEnd: Date;
+  automationType: string;
 }

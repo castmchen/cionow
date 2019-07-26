@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  baseUrl: 'http://localhost:1337'
+  baseUrl: 'http://localhost:1337',
+  wsUrl: 'ws://localhost:1337/realtime'
 };
 
 /*

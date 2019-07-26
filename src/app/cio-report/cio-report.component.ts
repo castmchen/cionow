@@ -1,3 +1,4 @@
+import { environment } from './../../environments/environment';
 import { PositionImp } from './../interface/positionImp';
 import { ChartServiceService } from './../services/chart-service.service';
 import { Component, OnInit } from '@angular/core';
@@ -9,7 +10,7 @@ import { LowerPositions } from '../interface/lowerPosion';
 @Component({
   selector: 'app-cio-report',
   templateUrl: './cio-report.component.html',
-  styleUrls: ['./cio-report.component.scss']
+  styleUrls: [ './cio-report.component.scss' ]
 })
 export class CioReportComponent implements OnInit {
   public ws: WebSocket;
@@ -28,7 +29,7 @@ export class CioReportComponent implements OnInit {
   public currentPeriodEnd: number;
   public isLoadingFlag: boolean;
 
-  constructor(private chartService: ChartServiceService) {}
+  constructor(private chartService: ChartServiceService) { }
 
   ngOnInit() {
     this.isLoadingFlag = true;
@@ -46,8 +47,7 @@ export class CioReportComponent implements OnInit {
     this.chartService.filterbypositionandperiod().subscribe(result => {
       this.isLoadingFlag = false;
       if (result !== 'fail') {
-        const charData = this.setupChartData(result as Array<ChartImp>);
-        this.chartService.triggerResetChart(charData);
+        this.setupChartData(result as Array<ChartImp>);
       }
     });
 
@@ -70,6 +70,10 @@ export class CioReportComponent implements OnInit {
         break;
       case 3:
         this.selectedManager = null;
+        this.positionManagerList = [];
+        break;
+      case 4:
+        this.selectedManager = null;
         break;
       default:
         break;
@@ -87,7 +91,7 @@ export class CioReportComponent implements OnInit {
     if (this.ws != null) {
       this.ws.close();
     }
-    this.ws = new WebSocket('ws://cionowapi.azurewebsites.net/realtime');
+    this.ws = new WebSocket(environment.wsUrl);
     this.ws.onopen = event => {
       console.log('WS has connected successfully.');
     };
@@ -95,9 +99,7 @@ export class CioReportComponent implements OnInit {
     this.ws.onmessage = event => {
       try {
         if (event.data) {
-          console.log(
-            '------------ An new data has been refreshed -----------'
-          );
+          console.log('------------ An new data has been refreshed -----------');
           const newChartOption = JSON.parse(event.data);
           console.log(newChartOption);
 
@@ -156,23 +158,27 @@ export class CioReportComponent implements OnInit {
             }
           }
 
-          if (tempEid !== '') {
+          const eventTime = new Date(newChartOption.eventTime);
+          const displayTime = this.currentPeriodModel === '1' ? eventTime.getHours() < 24
+            ? `${ eventTime.getHours() }-${ eventTime.getHours() + 1 }` : `${ eventTime.getHours() }-0`
+            : `${ (eventTime.getMonth() + 1) }-${ eventTime.getDate() }`;
+          if (tempEid !== '' && this.currentPeriodModel === '1') {
             that.chartService.triggerMonitorChart({
               name: tempEid,
-              value: newChartOption.hours
+              value: newChartOption.hours,
+              time: displayTime,
+              item: newChartOption
             });
           }
         }
       } catch (error) {
         console.error(
-          `An error has been occured while getting WS data, Details: ${error}`
+          `An error has been occured while getting WS data, Details: ${ error }`
         );
       }
     };
     this.ws.onerror = event => {
-      console.log(
-        `An error has occured while connecting WS, Details: ${event}`
-      );
+      console.log(`An error has occured while connecting WS, Details: ${ event }`);
     };
     this.ws.onclose = event => {
       console.log('WS connection has been closed.');
@@ -197,10 +203,12 @@ export class CioReportComponent implements OnInit {
 
   private setupChartData(callbackChartArray: Array<ChartImp>) {
     const currentSelectedPositionLevel = this.checkCurrentPositionLevel();
-    const newChartArray = [];
     if (currentSelectedPositionLevel == null) {
-      return newChartArray;
+      return;
     }
+    const newChartPositionArray = [];
+    const newChartTypeArray = [];
+    const newChartArray = { level: currentSelectedPositionLevel, data: [] };
 
     callbackChartArray.forEach(callbackChartItem => {
       let tempEid = '';
@@ -227,20 +235,61 @@ export class CioReportComponent implements OnInit {
         }
       }
 
-      const existInfo = newChartArray.find(
+      // trigger position pie chart
+      const existInfo = newChartPositionArray.find(
         newChartItem => newChartItem.name === tempEid
       );
       if (existInfo) {
         existInfo.value += parseFloat(callbackChartItem.hours);
       } else {
-        newChartArray.push({
+        newChartPositionArray.push({
           name: tempEid,
           value: parseFloat(callbackChartItem.hours)
         });
       }
+
+      // trigger type pie chart
+      const existTypeInfo = newChartTypeArray.find(
+        newChartItem =>
+          newChartItem.name ===
+          callbackChartItem.automationType.toLocaleLowerCase()
+      );
+
+      const eventTime = new Date(callbackChartItem.eventTime);
+      const displayTime = this.currentPeriodModel === '1' ? eventTime.getHours() < 24
+        ? `${ eventTime.getHours() }-${ eventTime.getHours() + 1 }` : `${ eventTime.getHours() }-0`
+        : `${ (eventTime.getMonth() + 1) }-${ eventTime.getDate() }`;
+      if (existTypeInfo) {
+        existTypeInfo.value += parseFloat(callbackChartItem.hours);
+        if (existTypeInfo.group) {
+          const existGroupInfo = existTypeInfo.group.find(_ => _.time === displayTime);
+          if (existGroupInfo) {
+            existGroupInfo.hours += parseFloat(callbackChartItem.hours);
+          } else {
+            existTypeInfo.group.push({ time: displayTime, hours: parseFloat(callbackChartItem.hours) });
+          }
+        }
+      } else {
+        const timeMap = [ { time: displayTime, hours: parseFloat(callbackChartItem.hours) } ];
+        newChartTypeArray.push({
+          name: callbackChartItem.automationType,
+          value: parseFloat(callbackChartItem.hours),
+          group: timeMap
+        });
+      }
+
+      // group by tempEid and trigger bar chart
+      const existGroup = newChartArray.data.find(_ => _.name === tempEid);
+      if (existGroup) {
+        existGroup.group.push({ column: callbackChartItem });
+      } else {
+        newChartArray.data.push({ name: tempEid, group: [ { column: callbackChartItem } ] });
+      }
     });
 
-    return newChartArray;
+    this.chartService.triggerResetPositionChartPie(newChartPositionArray);
+    this.chartService.triggerResetTypeChartPie(newChartTypeArray);
+    this.chartService.triggerResetChart(newChartArray);
   }
 
   private setupPeriod() {
@@ -252,33 +301,69 @@ export class CioReportComponent implements OnInit {
     this.currentPeriodEnd = periodEndDate.getTime();
     switch (this.currentPeriodModel) {
       case '1': {
-        this.currentPeriodStart = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth(), periodEndDate.getDate() - 1,
-          periodEndDate.getHours(), periodEndDate.getMilliseconds(), periodEndDate.getSeconds()).getTime();
+        this.currentPeriodStart = new Date(
+          periodEndDate.getFullYear(),
+          periodEndDate.getMonth(),
+          periodEndDate.getDate() - 1,
+          periodEndDate.getHours(),
+          periodEndDate.getMinutes(),
+          periodEndDate.getSeconds()
+        ).getTime();
         break;
       }
       case '2': {
-        this.currentPeriodStart = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth(), periodEndDate.getDate() - 3,
-          periodEndDate.getHours(), periodEndDate.getMilliseconds(), periodEndDate.getSeconds()).getTime();
+        this.currentPeriodStart = new Date(
+          periodEndDate.getFullYear(),
+          periodEndDate.getMonth(),
+          periodEndDate.getDate() - 3,
+          periodEndDate.getHours(),
+          periodEndDate.getMinutes(),
+          periodEndDate.getSeconds()
+        ).getTime();
         break;
       }
       case '3': {
-        this.currentPeriodStart = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth(), periodEndDate.getDate() - 7,
-          periodEndDate.getHours(), periodEndDate.getMilliseconds(), periodEndDate.getSeconds()).getTime();
+        this.currentPeriodStart = new Date(
+          periodEndDate.getFullYear(),
+          periodEndDate.getMonth(),
+          periodEndDate.getDate() - 7,
+          periodEndDate.getHours(),
+          periodEndDate.getMinutes(),
+          periodEndDate.getSeconds()
+        ).getTime();
         break;
       }
       case '4': {
-        this.currentPeriodStart = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth() - 1, periodEndDate.getDate(),
-          periodEndDate.getHours(), periodEndDate.getMilliseconds(), periodEndDate.getSeconds()).getTime();
+        this.currentPeriodStart = new Date(
+          periodEndDate.getFullYear(),
+          periodEndDate.getMonth() - 1,
+          periodEndDate.getDate(),
+          periodEndDate.getHours(),
+          periodEndDate.getMinutes(),
+          periodEndDate.getSeconds()
+        ).getTime();
         break;
       }
       case '5': {
-        this.currentPeriodStart = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth() - 6, periodEndDate.getDate(),
-          periodEndDate.getHours(), periodEndDate.getMilliseconds(), periodEndDate.getSeconds()).getTime();
+        this.currentPeriodStart = new Date(
+          periodEndDate.getFullYear(),
+          periodEndDate.getMonth() - 6,
+          periodEndDate.getDate(),
+          periodEndDate.getHours(),
+          periodEndDate.getMinutes(),
+          periodEndDate.getSeconds()
+        ).getTime();
         break;
       }
       case '6': {
-        new Date(periodEndDate.getFullYear() - 1, periodEndDate.getMonth(), periodEndDate.getDate(),
-          periodEndDate.getHours(), periodEndDate.getMilliseconds(), periodEndDate.getSeconds()).getTime();
+        new Date(
+          periodEndDate.getFullYear() - 1,
+          periodEndDate.getMonth(),
+          periodEndDate.getDate(),
+          periodEndDate.getHours(),
+          periodEndDate.getMinutes(),
+          periodEndDate.getSeconds()
+        ).getTime();
         break;
       }
       default: {
@@ -292,7 +377,7 @@ export class CioReportComponent implements OnInit {
     currentSelectedInfo: PositionImp,
     outputList: PositionImp[]
   ) {
-    if (positions[0].level === currentSelectedInfo.level) {
+    if (positions[ 0 ].level === currentSelectedInfo.level) {
       positions.forEach(_ => {
         if (_.eid === currentSelectedInfo.eid) {
           _.lowerPositions.forEach(__ => {
@@ -430,8 +515,6 @@ export class CioReportComponent implements OnInit {
       .getChartByPositionAndPeriod(requestInfo)
       .subscribe(result => {
         const newChartArray = this.setupChartData(result as any);
-        this.chartService.triggerResetChart(newChartArray);
-
         this.isLoadingFlag = false;
       });
   }

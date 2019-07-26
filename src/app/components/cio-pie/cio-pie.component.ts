@@ -1,30 +1,36 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import * as echart from 'echarts';
 import { ChartServiceService } from '../../services/chart-service.service';
 
 @Component({
   selector: 'app-cio-pie',
   templateUrl: './cio-pie.component.html',
-  styleUrls: ['./cio-pie.component.scss']
+  styleUrls: [ './cio-pie.component.scss' ]
 })
+
 export class CioPieComponent implements OnInit {
-   options: echart.EChartOption;
-   pieInstance: echart.ECharts;
+  options: echart.EChartOption;
+  pieInstance: echart.ECharts;
 
   constructor(private chartService: ChartServiceService) {
     this.options = {
       tooltip: {
-        formatter: '{b} : {c} ({d}%)'
+        formatter: '{b} <br/> {c} ({d}%)'
       },
       legend: {
         orient: 'vertical',
-        left: 'right'
+        left: 'right',
+        icon: 'circle'
+      },
+      grid: {
+        width: '90%',
+        height: '90%'
       },
       series: [
         {
           label: {
             normal: {
-              formatter: '  {b}：  {per|{d}%}  ',
+              formatter: '  {b} {per|{d}%}  ',
               backgroundColor: '#eee',
               borderColor: '#aaa',
               borderWidth: 1,
@@ -42,14 +48,14 @@ export class CioPieComponent implements OnInit {
                   height: 0
                 },
                 b: {
-                  fontSize: 16,
-                  lineHeight: 33
+                  fontSize: 12,
+                  lineHeight: 22
                 },
                 per: {
                   color: '#eee',
                   backgroundColor: '#334455',
-                  padding: [2, 4],
-                  borderRadius: 2
+                  padding: [ 2, 4 ],
+                  borderRadius: 3
                 }
               }
             }
@@ -68,11 +74,21 @@ export class CioPieComponent implements OnInit {
       ) as HTMLDivElement);
     }, 100);
 
-    this.chartService.onResetChart.subscribe(result => {
+    this.chartService.onResetChartPie_Position.subscribe(result => {
       const chartSeries = this.options.series as echart.EChartOption.Series;
+      const seriesArray = [];
+      result.forEach(_ => {
+        let simpleName = _.name;
+        if (_.name.includes('.')) {
+          simpleName = _.name.split('.')[0];
+        }
+        seriesArray.push({
+          name: simpleName,
+          value: _.value
+        });
+      });
+      chartSeries[ 0 ].data = seriesArray;
 
-      chartSeries[0].data = result;
-      chartSeries[0].legend = result.map(_ => _.name);
       if (typeof this.pieInstance === 'undefined') {
         this.pieInstance = echart.getInstanceByDom(document.getElementById(
           'cioPie'
@@ -83,18 +99,16 @@ export class CioPieComponent implements OnInit {
 
     this.chartService.onMonitorChart.subscribe(result => {
       const chartSeries = this.options.series as echarts.EChartOption.Series;
-      const xAxis = this.options.xAxis as echarts.EChartOption.Series;
-
-      const existIndex = chartSeries[0].data.findIndex(
+      const existIndex = chartSeries[ 0 ].data.findIndex(
         element => element.name === result.name
       );
       if (existIndex > -1) {
-        chartSeries[0].data[existIndex].value =
-          parseFloat(chartSeries[0].data[existIndex].value) +
+        chartSeries[ 0 ].data[ existIndex ].value =
+          parseFloat(chartSeries[ 0 ].data[ existIndex ].value) +
           parseFloat(result.value);
       } else {
-        chartSeries[0].data.push(result);
-        chartSeries[0].legend.push(result.name);
+        chartSeries[ 0 ].data.push({name: result.name, value: parseFloat(result.value)});
+        // chartSeries[ 0 ].legend.data.push(result.name);
       }
 
       this.pieInstance.setOption(this.options);
