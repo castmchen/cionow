@@ -162,7 +162,7 @@ export class CioReportComponent implements OnInit {
           const displayTime = this.currentPeriodModel === '1' ? eventTime.getHours() < 24
             ? `${ eventTime.getHours() }-${ eventTime.getHours() + 1 }` : `${ eventTime.getHours() }-0`
             : `${ (eventTime.getMonth() + 1) }-${ eventTime.getDate() }`;
-          if (tempEid !== '' && this.currentPeriodModel === '1') {
+          if (tempEid !== '' && this.currentPeriodModel === '1' && currentSelectedPositionLevel) {
             that.chartService.triggerMonitorChart({
               name: tempEid,
               value: newChartOption.hours,
@@ -249,34 +249,46 @@ export class CioReportComponent implements OnInit {
       }
 
       // trigger type pie chart
-      const existTypeInfo = newChartTypeArray.find(
-        newChartItem =>
-          newChartItem.name ===
-          callbackChartItem.automationType.toLocaleLowerCase()
+      const existInfo1 = newChartTypeArray.find(
+        newChartItem => newChartItem.name === callbackChartItem.automationType
       );
-
-      const eventTime = new Date(callbackChartItem.eventTime);
-      const displayTime = this.currentPeriodModel === '1' ? eventTime.getHours() < 24
-        ? `${ eventTime.getHours() }-${ eventTime.getHours() + 1 }` : `${ eventTime.getHours() }-0`
-        : `${ (eventTime.getMonth() + 1) }-${ eventTime.getDate() }`;
-      if (existTypeInfo) {
-        existTypeInfo.value += parseFloat(callbackChartItem.hours);
-        if (existTypeInfo.group) {
-          const existGroupInfo = existTypeInfo.group.find(_ => _.time === displayTime);
-          if (existGroupInfo) {
-            existGroupInfo.hours += parseFloat(callbackChartItem.hours);
-          } else {
-            existTypeInfo.group.push({ time: displayTime, hours: parseFloat(callbackChartItem.hours) });
-          }
-        }
+      if (existInfo1) {
+        existInfo1.value += parseFloat(callbackChartItem.hours);
       } else {
-        const timeMap = [ { time: displayTime, hours: parseFloat(callbackChartItem.hours) } ];
         newChartTypeArray.push({
           name: callbackChartItem.automationType,
-          value: parseFloat(callbackChartItem.hours),
-          group: timeMap
+          value: parseFloat(callbackChartItem.hours)
         });
       }
+
+      // const existTypeInfo = newChartTypeArray.find(
+      //   newChartItem =>
+      //     newChartItem.name ===
+      //     callbackChartItem.automationType.toLocaleLowerCase()
+      // );
+
+      // const eventTime = new Date(callbackChartItem.eventTime);
+      // const displayTime = this.currentPeriodModel === '1' ? eventTime.getHours() < 24
+      //   ? `${ eventTime.getHours() }-${ eventTime.getHours() + 1 }` : `${ eventTime.getHours() }-0`
+      //   : `${ (eventTime.getMonth() + 1) }-${ eventTime.getDate() }`;
+      // if (existTypeInfo) {
+      //   existTypeInfo.value += parseFloat(callbackChartItem.hours);
+      //   if (existTypeInfo.group) {
+      //     const existGroupInfo = existTypeInfo.group.find(_ => _.time === displayTime);
+      //     if (existGroupInfo) {
+      //       existGroupInfo.hours += parseFloat(callbackChartItem.hours);
+      //     } else {
+      //       existTypeInfo.group.push({ time: displayTime, hours: parseFloat(callbackChartItem.hours) });
+      //     }
+      //   }
+      // } else {
+      //   const timeMap = [ { time: displayTime, hours: parseFloat(callbackChartItem.hours) } ];
+      //   newChartTypeArray.push({
+      //     name: callbackChartItem.automationType,
+      //     value: parseFloat(callbackChartItem.hours),
+      //     group: timeMap
+      //   });
+      // }
 
       // group by tempEid and trigger bar chart
       const existGroup = newChartArray.data.find(_ => _.name === tempEid);

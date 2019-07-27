@@ -83,7 +83,8 @@ export class CioBarComponent implements OnInit {
               type: 'bar',
               stack: lastedX,
               itemStyle: this.itemStyle,
-              barMaxWidth: 80,
+              barMaxWidth: 100,
+              barWidth: 100,
               data: [ 0, 0, 0, 0, 0, 0, 0, parseFloat(result.value) ]
             } as echart.EChartOption.SeriesBar);
           }
@@ -99,7 +100,7 @@ export class CioBarComponent implements OnInit {
               type: 'bar',
               stack: lastedX,
               itemStyle: this.itemStyle,
-              barMaxWidth: 80,
+              barMaxWidth: 100,
               data: [ 0, 0, 0, 0, 0, 0, 0, parseFloat(result.value) ]
             } as echart.EChartOption.SeriesBar);
           }
@@ -179,6 +180,35 @@ export class CioBarComponent implements OnInit {
     } as echart.EChartOption;
   }
 
+  private fn(now: Date) {
+    let y = now.getFullYear();
+    let m = now.getMonth();
+    let d = now.getDate();
+    let h: string | number = now.getHours();
+    let mm = now.getMinutes();
+    let s = now.getSeconds();
+    let str;
+    if (h > 12) {
+      h -= 12;
+      str = 'PM';
+    } else {
+      str = 'AM';
+    }
+
+    if (h < 10) {
+      h = '0' + h;
+    }
+    // h = h < 10 ? "0" + h : h;
+    // d = d < 10 ? "0" + d : d;
+    // m = m < 10 ? "0" + m : m;
+    // mm = mm < 10 ? "0" + mm : mm;
+    // s = s < 10 ? "0" + s : s;
+    // const xy = y + "/" + m + "/" + d + "," + h + ":" + mm + ":" + s;
+    // xy += str;
+
+    return `${ h } ${ str }`;
+  };
+
   public buildBarChartData(isAutomationType) {
     let tempEidKey = '';
     switch (this.positionLevel) {
@@ -220,7 +250,7 @@ export class CioBarComponent implements OnInit {
       case '1':
         for (let i = 7; i >= 0; i--) {
           const currentDate = new Date(currentTime - 10800000 * i);
-          timeXForDisplay.push(`${ currentDate.getHours() }(${ currentDate.getDate() }/${ currentDate.getMonth() + 1 })`);
+          timeXForDisplay.push(this.fn(currentDate));
           const newTimeItem = [];
           for (const tempMapItem of tempArray) {
             const tempItem = tempMapItem.value;
@@ -279,11 +309,12 @@ export class CioBarComponent implements OnInit {
         break;
       case '4':
         for (let i = 3; i >= 0; i--) {
-          const currentDate = i === 0 ? new Date(currentDateTime.getFullYear(), currentDateTime.getMonth() + 1, currentDateTime.getDate(),
-            currentDateTime.getHours(), currentDateTime.getMinutes(), currentDateTime.getSeconds()) :
-            new Date(currentDateTime.getFullYear(), currentDateTime.getMonth() + 1, currentDateTime.getDate() - i * 7,
-              currentDateTime.getHours(), currentDateTime.getMinutes(), currentDateTime.getSeconds());
-          timeXForDisplay.push(`${ currentDate.getDate() }/${ currentDate.getMonth() }`);
+          // const currentDate = i === 0 ? new Date(currentDateTime.getFullYear(), currentDateTime.getMonth() + 1, currentDateTime.getDate(),
+          //   currentDateTime.getHours(), currentDateTime.getMinutes(), currentDateTime.getSeconds()) :
+          //   new Date(currentDateTime.getFullYear(), currentDateTime.getMonth() + 1, currentDateTime.getDate() - i * 7,
+          //     currentDateTime.getHours(), currentDateTime.getMinutes(), currentDateTime.getSeconds());
+          const weekStr = i > 0 ? i === 1 ? '1 Week Ago' : i + 'Weeks Ago' : 'Now';
+          timeXForDisplay.push(weekStr);
           const newTimeItem = [];
           for (const tempMapItem of tempArray) {
             const tempItem = tempMapItem.value;
@@ -385,7 +416,7 @@ export class CioBarComponent implements OnInit {
             type: 'bar',
             stack: timeXForDisplay[ index ],
             itemStyle: this.itemStyle,
-            barMaxWidth: 80,
+            barMaxWidth: 100,
             data: [ parseFloat(newItem.value) ]
           } as echart.EChartOption.SeriesBar);
         }
@@ -420,12 +451,12 @@ export class CioBarComponent implements OnInit {
     if (this.positionLevel) {
       const newData = this.buildBarChartData(false);
       xAxis.data = newData.xAxis;
-      xAxis.name = 'Time Unit';
+      xAxis.name = 'Time';
       (barOptions.legend as any).data = newData.legend;
       barOptions.series = newData.series;
     } else {
       xAxis.data = this.dataContainer.map(_ => _.name);
-      xAxis.name = 'Personnel Unit';
+      xAxis.name = 'Organization/Group';
       for (const item of this.dataContainer) {
         const tempColumArray = [];
         for (const groupItem of item.group) {
@@ -448,7 +479,7 @@ export class CioBarComponent implements OnInit {
               type: 'bar',
               stack: item.name,
               itemStyle: this.itemStyle,
-              barMaxWidth: 80,
+              barMaxWidth: 100,
               data: [ _.value ]
             } as echart.EChartOption.SeriesBar);
           }
@@ -470,7 +501,7 @@ export class CioBarComponent implements OnInit {
     if (this.positionLevel) {
       const newData = this.buildBarChartData(true);
       xAxis.data = newData.xAxis;
-      xAxis.name = 'Time Unit';
+      xAxis.name = 'Time';
       (barOptions.legend as any).data = newData.legend;
       barOptions.series = newData.series;
     } else {
@@ -512,7 +543,7 @@ export class CioBarComponent implements OnInit {
               type: 'bar',
               stack: typeItem.automationType,
               itemStyle: this.itemStyle,
-              barMaxWidth: 80,
+              barMaxWidth: 100,
               data: [ parseFloat(typeItem.hours) ]
             } as echart.EChartOption.SeriesBar);
           }
@@ -532,7 +563,7 @@ export class CioBarComponent implements OnInit {
         }
       }
 
-      xAxis.name = 'Automation Unit';
+      xAxis.name = 'Automation Type';
       xAxis.data = tempXArray;
       (barOptions.legend as any).data = tempLegendArray;
     }
