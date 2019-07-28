@@ -88,14 +88,14 @@ export class CioPieTypeComponent implements OnInit {
     this.chartService.onMonitorChart.subscribe(result => {
       const chartSeries = this.options.series as echarts.EChartOption.Series;
       const existIndex = chartSeries[ 0 ].data.findIndex(
-        element => element.name === result.name
+        element => element.name === result.item.automationType
       );
       if (existIndex > -1) {
         chartSeries[ 0 ].data[ existIndex ].value =
           parseFloat(chartSeries[ 0 ].data[ existIndex ].value) +
           parseFloat(result.value);
       } else {
-        chartSeries[ 0 ].data.push({name: result.name, value: parseFloat(result.value)});
+        chartSeries[ 0 ].data.push({name: result.item.automationType, value: parseFloat(result.value)});
         // chartSeries[ 0 ].legend.data.push(result.name);
       }
 

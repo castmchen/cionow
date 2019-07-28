@@ -53,17 +53,9 @@ export class CioBarComponent implements OnInit {
       const chartSeries = barOptions.series as echarts.EChartOption.SeriesBar[];
       const xAxis = barOptions.xAxis as echarts.EChartOption.XAxis;
 
-      let isNewFlag = true;
-      const lastedX = xAxis[ 0 ].data[ xAxis[ 0 ].data.length - 1 ] as string;
-      const eventTimeDate = new Date(result.item.eventTime);
-      if (`${ eventTimeDate.getDate() }/${ eventTimeDate.getMonth() + 1 })` === lastedX.split('(')[ 1 ]) {
-        isNewFlag = eventTimeDate.getHours() - parseFloat(lastedX.split('(')[ 0 ]) > 3;
-      }
-
-      if (isNewFlag) {
-        barOptions.toolbox[ 0 ].feature.myTool1.title.indexOf('AutomationType') > -1
-          ? this.initBarChartForPerson() : this.initBarChartForAutomationType();
-      } else {
+      const eventX = this.fn(new Date(result.item.eventTime))
+      const exsitX = xAxis[0].data.find(x => x === eventX);
+      if (exsitX) {
         if (barOptions.toolbox[ 0 ].feature.myTool1.title.indexOf('AutomationType') > -1) {
           // person
           const existSeries = chartSeries.find(_ => _.name === result.name);
@@ -81,7 +73,8 @@ export class CioBarComponent implements OnInit {
             chartSeries.push({
               name: result.name,
               type: 'bar',
-              stack: lastedX,
+              stack: 'one',
+              stackFlag: exsitX,
               itemStyle: this.itemStyle,
               barMaxWidth: 100,
               barWidth: 100,
@@ -98,13 +91,17 @@ export class CioBarComponent implements OnInit {
             chartSeries.push({
               name: result.item.automationType,
               type: 'bar',
-              stack: lastedX,
+              stack: 'one',
+              stackFlag: exsitX,
               itemStyle: this.itemStyle,
               barMaxWidth: 100,
               data: [ 0, 0, 0, 0, 0, 0, 0, parseFloat(result.value) ]
             } as echart.EChartOption.SeriesBar);
           }
         }
+      } else {
+        barOptions.toolbox[ 0 ].feature.myTool1.title.indexOf('AutomationType') > -1
+        ? this.initBarChartForPerson() : this.initBarChartForAutomationType();
       }
 
       this.barInstance.setOption(barOptions);
@@ -404,7 +401,7 @@ export class CioBarComponent implements OnInit {
     const newLegendArray = [];
     newTimeArray.forEach((newArray, index) => {
       newArray.forEach(newItem => {
-        const seriesIndex = newSeriesArray.findIndex(_ => _.name === newItem.key && _.stack === timeXForDisplay[ index ]);
+        const seriesIndex = newSeriesArray.findIndex(_ => _.name === newItem.key && _.stackFlag === timeXForDisplay[ index ]);
         if (seriesIndex > -1) {
           newSeriesArray[ seriesIndex ].data[ 0 ] += parseFloat(newItem.value);
         } else {
@@ -414,17 +411,18 @@ export class CioBarComponent implements OnInit {
           newSeriesArray.push({
             name: newItem.key,
             type: 'bar',
-            stack: timeXForDisplay[ index ],
+            stack: 'one',
+            stackFlag: timeXForDisplay[ index ],
             itemStyle: this.itemStyle,
             barMaxWidth: 100,
             data: [ parseFloat(newItem.value) ]
-          } as echart.EChartOption.SeriesBar);
+          });
         }
       });
     });
 
     for (let i = 0; i < timeXForDisplay.length; i++) {
-      const existSeries = newSeriesArray.filter(_ => _.stack === timeXForDisplay[ i ]);
+      const existSeries = newSeriesArray.filter(_ => _.stackFlag === timeXForDisplay[ i ]);
       if (existSeries) {
         for (let j = 0; j < timeXForDisplay.length; j++) {
           if (j < i) {
@@ -442,7 +440,7 @@ export class CioBarComponent implements OnInit {
   public initBarChartForPerson() {
     const barOptions = this.initChart();
     const xAxis = barOptions.xAxis as echart.EChartOption.XAxis;
-    const chartSeries = barOptions.series as echart.EChartOption.SeriesBar[];
+    const chartSeries = barOptions.series as any[];
     const customToolBox = (barOptions.toolbox as any).feature.myTool1;
     if (customToolBox) {
       customToolBox.title = 'Convert To AutomationType';
@@ -469,7 +467,7 @@ export class CioBarComponent implements OnInit {
         }
 
         tempColumArray.forEach((_, index) => {
-          const chartIndex = chartSeries.findIndex(p => p.name === _.type && p.stack === p.name);
+          const chartIndex = chartSeries.findIndex(p => p.name === _.type && p.stackFlag === p.name);
           if (chartIndex > -1) {
             (chartSeries[ chartIndex ] as any).data.push(_.value);
           } else {
@@ -477,11 +475,12 @@ export class CioBarComponent implements OnInit {
             chartSeries.push({
               name: _.type,
               type: 'bar',
-              stack: item.name,
+              stack: "one",
+              stackFlag: item.name,
               itemStyle: this.itemStyle,
               barMaxWidth: 100,
               data: [ _.value ]
-            } as echart.EChartOption.SeriesBar);
+            });
           }
         });
       }
@@ -532,16 +531,17 @@ export class CioBarComponent implements OnInit {
           if (tempXArray.indexOf(typeItem.automationType) < 0) {
             tempXArray.push(typeItem.automationType as string);
           }
-          const existInfo = (barOptions.series as any).find(_ => _.name === typeItem.portfolioEid && _.stack === typeItem.automationType);
+          const existInfo = (barOptions.series as any).find(_ => _.name === typeItem.portfolioEid && _.stackFlag === typeItem.automationType);
           if (existInfo) {
-            if (existInfo.stack === typeItem.automationType) {
+            if (existInfo.stackFlag === typeItem.automationType) {
               existInfo.data[ 0 ] = parseFloat(existInfo.data[ 0 ]) + parseFloat(typeItem.hours);
             }
           } else {
             barOptions.series.push({
               name: item.eid,
               type: 'bar',
-              stack: typeItem.automationType,
+              stack: 'one',
+              stackFlag: typeItem.automationType,
               itemStyle: this.itemStyle,
               barMaxWidth: 100,
               data: [ parseFloat(typeItem.hours) ]
@@ -551,7 +551,7 @@ export class CioBarComponent implements OnInit {
       }
 
       for (let i = 0; i < tempXArray.length; i++) {
-        const existSeries = barOptions.series.find(_ => (_ as any).stack === tempXArray[ i ]) as any;
+        const existSeries = barOptions.series.find(_ => (_ as any).stackFlag === tempXArray[ i ]) as any;
         if (existSeries) {
           for (let j = 0; j < tempXArray.length; j++) {
             if (j < i) {
