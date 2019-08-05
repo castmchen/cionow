@@ -270,7 +270,7 @@ export class CioBarComponent implements OnInit {
         for (let i = 2; i >= 0; i--) {
           const currentDate = new Date(currentDateTime.getFullYear(), currentDateTime.getMonth() + 1, currentDateTime.getDate() - i,
             currentDateTime.getHours(), currentDateTime.getMinutes(), currentDateTime.getSeconds());
-          timeXForDisplay.push(`${ currentDate.getDate() }/${ currentDate.getMonth() }`);
+          timeXForDisplay.push(`${ currentDate.getMonth() }/${ currentDate.getDate() }`);
           const newTimeItem = [];
           for (const tempMapItem of tempArray) {
             const tempItem = tempMapItem.value;
@@ -289,7 +289,7 @@ export class CioBarComponent implements OnInit {
         for (let i = 6; i >= 0; i--) {
           const currentDate = new Date(currentDateTime.getFullYear(), currentDateTime.getMonth() + 1, currentDateTime.getDate() - i,
             currentDateTime.getHours(), currentDateTime.getMinutes(), currentDateTime.getSeconds());
-          timeXForDisplay.push(`${ currentDate.getDate() }/${ currentDate.getMonth() }`);
+          timeXForDisplay.push(`${currentDate.getMonth() }/${ currentDate.getDate() }`);
           const newTimeItem = [];
           for (const tempMapItem of tempArray) {
             const tempItem = tempMapItem.value;
@@ -340,8 +340,8 @@ export class CioBarComponent implements OnInit {
             currentDateTime.getDate(), currentDateTime.getHours(), currentDateTime.getMinutes(), currentDateTime.getSeconds()) :
             new Date(currentDateTime.getFullYear(), currentDateTime.getMonth() - i + 1, currentDateTime.getDate(),
               currentDateTime.getHours(), currentDateTime.getMinutes(), currentDateTime.getSeconds());
-          timeXForDisplay.push(`${ currentDate.getDate() }/${ currentDate.getMonth() === 0 ?
-            12 : currentDate.getMonth() }/${ currentDate.getFullYear() }`);
+          timeXForDisplay.push(`${ currentDate.getMonth() === 0 ?
+            12 : currentDate.getMonth() }/${  currentDate.getDate()}/${ currentDate.getFullYear() }`);
           const newTimeItem = [];
           for (const tempMapItem of tempArray) {
             const tempItem = tempMapItem.value;
@@ -369,8 +369,8 @@ export class CioBarComponent implements OnInit {
             currentDateTime.getDate(), currentDateTime.getHours(), currentDateTime.getMinutes(), currentDateTime.getSeconds()) :
             new Date(currentDateTime.getFullYear(), currentDateTime.getMonth() - i + 1, currentDateTime.getDate(),
               currentDateTime.getHours(), currentDateTime.getMinutes(), currentDateTime.getSeconds());
-          timeXForDisplay.push(`${ currentDate.getDate() }/${ currentDate.getMonth() === 0 ?
-            12 : currentDate.getMonth() }`);
+          timeXForDisplay.push(`${ currentDate.getMonth() === 0 ?
+            12 : currentDate.getMonth() }/${ currentDate.getDate() }`);
           const newTimeItem = [];
           for (const tempMapItem of tempArray) {
             const tempItem = tempMapItem.value;
@@ -475,7 +475,7 @@ export class CioBarComponent implements OnInit {
             chartSeries.push({
               name: _.type,
               type: 'bar',
-              stack: "one",
+              stack: 'one',
               stackFlag: item.name,
               itemStyle: this.itemStyle,
               barMaxWidth: 100,
