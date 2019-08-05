@@ -293,10 +293,10 @@ export class CioBarComponent implements OnInit {
           const newTimeItem = [];
           for (const tempMapItem of tempArray) {
             const tempItem = tempMapItem.value;
-            if (tempItem.eventTime > new Date(currentDateTime.getFullYear(), currentDateTime.getMonth(), currentDateTime.getDate() - i,
+            if (tempItem.eventTime > new Date(currentDateTime.getFullYear(), currentDateTime.getMonth(), currentDateTime.getDate() - (i + 1),
               currentDateTime.getHours(), currentDateTime.getMinutes(), currentDateTime.getSeconds()).getTime()
               && tempItem.eventTime <= new Date(currentDateTime.getFullYear(), currentDateTime.getMonth(),
-                currentDateTime.getDate() - i + 1, currentDateTime.getHours(), currentDateTime.getMinutes(),
+                currentDateTime.getDate() - i, currentDateTime.getHours(), currentDateTime.getMinutes(),
                 currentDateTime.getSeconds())) {
               newTimeItem.push({ key: tempMapItem.key, value: tempItem.hours });
             }
