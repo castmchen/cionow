@@ -479,7 +479,7 @@ export class CioBarComponent implements OnInit {
               stackFlag: item.name,
               itemStyle: this.itemStyle,
               barMaxWidth: 100,
-              data: [ _.value ]
+              data: [[item.name,_.value] ]
             });
           }
         });
